@@ -1,0 +1,281 @@
+import React, { useState, useEffect } from 'react';
+import './dashboard.css';
+import { FaRegSnowflake, FaSun, FaCloudRain, FaCloud, FaWind } from "react-icons/fa";
+import { MdLightbulb, MdInfoOutline } from 'react-icons/md';
+import Timeline from '../../components/Timeline/Timeline';
+import Phases from '../../components/Phases/Phases'
+import MTest from '../../components/MTest'
+import Modal from '../../components/Modal/Modal';
+import axios from "axios";
+
+const Dashboard = () => {
+  const [openModal, setOpenModal] = useState(null); // Track which modal is open
+
+  const openSpecificModal = (modalName) => setOpenModal(modalName);
+  const closeModal = () => setOpenModal(null);
+
+  const relationships = [
+    {
+      id: 0,
+      name: 'daddy',
+      birthday: '04-11',
+      last_checkin: '2024-11-25',
+      checkin_freq: 'weekly',
+    },
+    {
+      id: 1,
+      name: 'mummy',
+      birthday: '11-11',
+      last_checkin: '2024-12-06',
+      checkin_freq: 'weekly',
+    },
+    {
+      id: 2,
+      name: 'grandparents (m)',
+      birthday: '12-34',
+      last_checkin: '2024-12-03',
+      checkin_freq: 'weekly',
+    },
+  ];
+
+  const [progressData, setProgressData] = useState([]);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [weather, setWeather] = useState(null);
+  const [hour, setHour] = useState(currentTime.getHours());
+
+  const weatherIconMap = {
+    Clear: <FaSun />,
+    Rain: <FaCloudRain />,
+    Snow: <FaRegSnowflake />,
+    Clouds: <FaCloud />,
+    Wind: <FaWind />,
+    Default: <FaCloud />,
+  };
+
+  const parseDate = (dateString) => {
+    const [year, month, day] = dateString.split('-');
+    return new Date(year, month - 1, day);
+  };
+
+  const calculateProgress = (lastCheckin, frequency) => {
+    const now = new Date();
+    const lastCheckinDate = parseDate(lastCheckin);
+    const daysSinceCheckin = Math.ceil((now - lastCheckinDate) / (1000 * 60 * 60 * 24));
+    const frequencyDays = frequency === 'weekly' ? 7 : 1; // Adjust for other frequencies if needed
+
+    const progress = Math.min(daysSinceCheckin / frequencyDays, 1); // Progress percentage capped at 100%
+    const daysLeft = Math.max(frequencyDays - daysSinceCheckin, 0); // Days until the next call
+
+    return { progress, daysLeft, overdue: daysSinceCheckin >= frequencyDays };
+  };
+
+  const greeting = () => {
+    // const hour = currentTime.getHours();
+
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
+  };
+
+
+  // Format time and date
+  const formattedTime = currentTime.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const formattedDate = currentTime.toLocaleDateString("en-EU", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  useEffect(() => {
+    // Update the time every second
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    // Cleanup the timer on component unmount
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    // Fetch weather data
+    const fetchWeather = async () => {
+      const apiKey = "8354f869a30f01dbe895086726636e35";
+      const city = "Bristol, GB"; // Replace with desired city or use geolocation
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+
+      try {
+        const response = await axios.get(url);
+        const weatherCondition = response.data.weather[0].main;
+        setWeather(weatherCondition);
+      } catch (error) {
+        console.error("Error fetching weather data:", error);
+        setWeather("Default");
+      }
+    };
+
+    fetchWeather();
+  }, []);
+
+  useEffect(() => {
+    // Update progress data every second
+    const interval = setInterval(() => {
+      const updatedProgress = relationships.map((relationship) => {
+        const { progress, daysLeft, overdue } = calculateProgress(
+          relationship.last_checkin,
+          relationship.checkin_freq
+        );
+        return { ...relationship, progress, daysLeft, overdue };
+      });
+      setProgressData(updatedProgress);
+    }, 1000);
+
+    // Clear the interval on component unmount
+    return () => clearInterval(interval);
+  }, [relationships]);
+
+
+  useEffect(() => {
+    // Update the time every second
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    // Cleanup the timer on component unmount
+    return () => clearInterval(timer);
+  }, []);
+
+
+
+ 
+
+  return (
+    <div className="dashboard">
+      <div className="db-main">
+        <div className="db-main_header">
+          <div className="db-info">
+            <h2>{formattedTime}</h2>
+            {weather ? weatherIconMap[weather] || weatherIconMap.Default : <FaCloud />}
+          </div>
+          <div className="db-greeting">
+            <h1>{greeting()}, Seyitan</h1>
+            <h3>
+              Today is <b>{formattedDate}. </b> 
+              {
+                
+                hour < 12 ? <>It’s time to start your day.</>: hour < 18 ? <>Adventure awaits!</>: <>Time to wind down.</>
+              }
+            </h3>
+          </div>
+        </div>
+        <div className="db-main_content">
+          <div className="db-main_content_timeline">
+            <Timeline />
+          </div>
+          <div className="db-main_content_daily">
+            <div>
+              <h4>DAILY PROJECT GOAL</h4>
+              <p>Life Dashboard</p>
+            </div>
+            <div>
+              <h4>DAILY ADVENTURE</h4>
+              <p>Roller skating in Castle Park</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="db-sidebar">
+        <div className="db-sidebar_phases">
+          <Phases />
+          
+
+          <div className="db-sidebar-button" onClick={() => openSpecificModal("phases")}>open cycle</div>
+          {/* Modal 1 */}
+          <Modal isOpen={openModal === "phases"} onClose={closeModal}>
+            <h1>phases</h1>
+            <MTest />
+          </Modal>
+
+          {/* Modal 2 */}
+          <Modal isOpen={openModal === "activities"} onClose={closeModal}>
+            <h1>activities</h1>
+            <p>This is the content for Modal 2.</p>
+          </Modal>
+
+          {/* Modal 3 */}
+          <Modal isOpen={openModal === "relationships"} onClose={closeModal}>
+            <h1>relationships</h1>
+            <p>This is the content for Modal 3.</p>
+          </Modal>
+
+          {/* Modal 3 */}
+          <Modal isOpen={openModal === "ideas"} onClose={closeModal}>
+            <h1>ideas</h1>
+            <p>This is the content for Modal 3.</p>
+          </Modal>
+        </div>
+        <div className="db-sidebar_fast">
+          You should aim for a 16 hour fast today.
+          <MdInfoOutline />
+        </div>
+        <div className="db-sidebar_activity">
+          <div className="db-sidebar_activity_box">
+            <div className="db-sidebar_activity_header">RECOMMENDED ACTIVITY:</div>
+            <div className="db-sidebar_activity_content">Pool Swim</div>
+          </div>
+          <div className="db-sidebar-button" onClick={() => openSpecificModal("activities")}>more activities</div>
+
+        </div>
+
+        <div className="db-sidebar_relationships">
+          <div className="db-sidebar_relationships_box">
+            <div className="db-sidebar_relationships_header">RECOMMENDED CHECK-INS:</div>
+            <div className="db-sidebar_relationships_relations">
+              {progressData.map((relationship) => (
+                <div key={relationship.id} className="db-sidebar_relationships_relation">
+                  <div className="db-sidebar_relationships_relation_content">
+                    {relationship.name}
+                    {/* <p>
+                      {relationship.daysLeft > 0
+                        ? `Next call in ${relationship.daysLeft} day(s)`
+                        : 'Overdue! Call now.'}
+                    </p> */}
+                    <div className="db-sidebar_relationships_relation_content_progress">
+                      <div
+                        className="db-sidebar_relationships_relation_content_progress-bar"
+                        style={{
+                          width: `${relationship.progress * 100}%`,
+                          background: relationship.overdue ? '#ff6f61' : '#15BAC6', // Red if overdue
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <MdInfoOutline />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="db-sidebar-button" onClick={() => openSpecificModal("relationships")}>more relationships</div>
+        </div>
+        <div className="db-sidebar_ideas">
+          <div className="db-sidebar_ideas_box">
+            <h2>
+              <MdLightbulb />
+            </h2>
+            <p>idea of the day:</p>
+            <div className="db-sidebar_ideas_box_content">
+              GEOCACHING FOR RESTAURANTS
+            </div>
+          </div>
+          <div className="db-sidebar-button" onClick={() => openSpecificModal("ideas")}>more ideas</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;

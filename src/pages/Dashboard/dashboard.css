@@ -1,0 +1,251 @@
+.dashboard {
+    margin: 2rem;
+    display: flex;
+    justify-content: space-between;
+    height: 90vh;
+
+    
+}
+/* main */
+.db-main {
+    flex: 6;
+}
+
+.db-sidebar {
+    flex: 2;
+
+}
+
+.db-main_header {
+
+}
+
+.db-info {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: .5rem;
+}
+
+.db-info h2 {
+    font-weight: normal;
+    margin: 0;
+}
+
+.db-greeting {
+    margin: 0;
+
+}
+
+.db-greeting h1 {
+    font-size: 3em;
+    font-weight: normal;
+    margin: 0;
+}
+
+.db-greeting h3 {
+    /* font-size: 3em; */
+    font-weight: normal;
+    margin: 0;
+}
+
+.db-main_content {
+    display: flex;
+    margin: 3rem 0;
+    gap: 1rem;
+    height: 55vh;
+}
+
+.db-main_content_timeline {
+    flex: 1;
+
+}
+
+.db-main_content_daily {
+    display: flex;
+    flex-direction: column;
+    flex: 3;
+    background-color: var(--box);
+    border-radius: 30px;
+    height: 100%;
+    padding: 2rem;
+    gap: 5rem;
+    /* height: 100%; */
+}
+
+.db-main_content_daily h4 {
+    margin: 0;
+    color: var(--gray-text);
+    font-size: .8em;
+}
+
+.db-main_content_daily p {
+    font-weight: bold;
+    font-size: 2em;
+    margin: 0;
+}
+
+
+
+/* sidebar */
+
+.db-sidebar {
+    margin-left: 2rem;
+    font-size: 0.7em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.db-sidebar_phases {
+    margin-bottom: .5rem;
+}
+
+.db-sidebar_fast {
+    background-color: var(--box);
+    border-radius: 45px;
+    padding: .6rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.db-sidebar_activity {
+    text-align: right;
+
+}
+
+.db-sidebar_activity_box {
+    text-align: center;
+
+    background-color: var(--box);
+    border-radius: 30px;
+    padding: .6rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem 0 .5rem;
+
+}
+
+.db-sidebar_activity_header {
+    font-weight: bold;
+    font-size: 1em;
+
+}
+
+.db-sidebar_activity_content {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+
+.db-sidebar_relationships {
+    text-align: right;
+
+}
+
+.db-sidebar_relationships_box {
+    text-align: center;
+    border-radius: 30px;
+    /* padding: 1rem; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* align-items: center; */
+    margin: .5rem 0 .5rem;
+
+}
+
+.db-sidebar_relationships_header {
+    font-weight: bold;
+    font-size: 1em;
+
+}
+
+.db-sidebar_relationships_relations {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+
+    
+}
+
+.db-sidebar_relationships_relation {
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    background-color: var(--box);
+    border-radius: 45px;
+    margin: .3rem 0;
+    /* justify-content: space-between; */
+    padding: 0 1rem;
+    font-weight: bold;
+}
+
+.db-sidebar_relationships_relation_content {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    flex: 5;
+    margin: 0 1rem;
+    
+}
+
+.db-sidebar_relationships_relation_content_progress {
+    position: relative;
+    width: 100%;
+    height: 5px;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: black;
+    margin: .3rem;
+}
+
+.db-sidebar_relationships_relation_content_progress-bar {
+    height: 100%;
+    transition: width 0.3s ease-in-out;
+    border-radius: 5px;
+
+} 
+
+.db-sidebar_ideas {
+    text-align: right;
+}
+
+.db-sidebar_ideas_box {
+    text-align: center;
+    border-radius: 30px;
+    padding: .6rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: .5rem 0 .5rem;
+    background-color: var(--box);
+}
+
+.db-sidebar_ideas_box h2{
+    margin: 0;
+    font-size: 4em;
+}
+
+.db-sidebar_ideas_box p {
+    margin: 0;
+} 
+
+.db-sidebar_ideas_box_content { 
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.db-sidebar-button {
+    cursor: pointer;
+    text-align: right;
+}
+
+.db-sidebar-button:hover{
+    font-weight: bold;
+}
