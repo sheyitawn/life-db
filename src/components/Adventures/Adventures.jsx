@@ -1,37 +1,117 @@
-import React, { useState } from "react";
-import { isTaskDue, rescheduleTask, pushTask } from "../../utils/adventureUtil";
+import React, { useState, useEffect } from 'react';
+import apiRequest from '../../utils/apiRequest';
 
-const Adventures = ({ tasks, onUpdate }) => {
-  const dueTasks = tasks.filter(isTaskDue);
+const Adventures = ({ setAdventure }) => {
+    const [mainRecommendation, setMainRecommendation] = useState(null);
+    const [otherRecommendations, setOtherRecommendations] = useState([]);
+    const [newAdventure, setNewAdventure] = useState({ title: '', intervalInWeeks: '' });
 
-  const handleDo = (task) => {
-    const updatedTask = rescheduleTask(task, task.intervalInWeeks);
-    onUpdate(task.id, updatedTask);
-  };
+    // Fetch recommendations from the backend
+    useEffect(() => {
+        const fetchRecommendations = async () => {
+            try {
+                const response = await apiRequest('/adventures/recommendations');
+                setMainRecommendation(response.main);
+                setOtherRecommendations(response.others);
 
-  const handleSkip = (task) => {
-    const updatedTask = { ...task, status: "skipped" };
-    onUpdate(task.id, updatedTask);
-  };
+                // Pass the main recommendation to the parent
+                if (setAdventure) {
+                    setAdventure(response.main);
+                }
+            } catch (error) {
+                console.error('Error fetching recommendations:', error);
+            }
+        };
+        fetchRecommendations();
+    }, [setAdventure]);
 
-  const handlePush = (task, days) => {
-    const updatedTask = pushTask(task, days);
-    onUpdate(task.id, updatedTask);
-  };
+    // Handle updates
+    const updateTask = async (id, updatedTask) => {
+        try {
+            await apiRequest('/adventures/update-task', 'POST', { id, updatedTask });
+            // Refresh recommendations after an update
+            const response = await apiRequest('/recommendations');
+            setMainRecommendation(response.main);
+            setOtherRecommendations(response.others);
 
-  return (
-    <div>
-      <h3>Today's Recommendations</h3>
-      {dueTasks.map((task) => (
-        <div key={task.id}>
-          <p>{task.title} (Due: {new Date(task.dueDate).toLocaleDateString()})</p>
-          <button onClick={() => handleDo(task)}>Do it</button>
-          <button onClick={() => handleSkip(task)}>Skip</button>
-          <button onClick={() => handlePush(task, 7)}>Push 1 Week</button>
+            // Pass the updated main recommendation to the parent
+            if (setAdventure) {
+                setAdventure(response.main);
+            }
+        } catch (error) {
+            console.error('Error updating task:', error);
+        }
+    };
+
+    // Add a new adventure
+    const addTask = async () => {
+        if (!newAdventure.title || !newAdventure.intervalInWeeks) {
+            return alert('Please provide a title and interval.');
+        }
+
+        try {
+            await apiRequest('/add-task', 'POST', newAdventure);
+            setNewAdventure({ title: '', intervalInWeeks: '' });
+
+            // Refresh recommendations after adding a task
+            const response = await apiRequest('/recommendations');
+            setMainRecommendation(response.main);
+            setOtherRecommendations(response.others);
+        } catch (error) {
+            console.error('Error adding task:', error);
+        }
+    };
+
+    // Action Handlers
+    const handleDo = (task) => {
+        const updatedTask = {
+            lastDone: new Date().toISOString(),
+            status: 'done',
+        };
+        updateTask(task.id, updatedTask);
+    };
+
+    const handleSkip = (task) => {
+        const updatedTask = { status: 'skipped' };
+        updateTask(task.id, updatedTask);
+    };
+
+    return (
+        <div>
+            <h3>Today's Adventure Recommendation</h3>
+            {mainRecommendation ? (
+                <div>
+                    <h4>{mainRecommendation.title}</h4>
+                    <button onClick={() => handleDo(mainRecommendation)}>Mark as Done</button>
+                    <button onClick={() => handleSkip(mainRecommendation)}>Skip</button>
+                </div>
+            ) : (
+                <p>No recommendations available.</p>
+            )}
+            <h3>Other Due Adventures</h3>
+            {otherRecommendations.map((task) => (
+                <div key={task.id}>
+                    <h4>{task.title}</h4>
+                    <button onClick={() => handleDo(task)}>Mark as Done</button>
+                    <button onClick={() => handleSkip(task)}>Skip</button>
+                </div>
+            ))}
+            <h3>Add a New Adventure</h3>
+            <input
+                type="text"
+                placeholder="Adventure Title"
+                value={newAdventure.title}
+                onChange={(e) => setNewAdventure({ ...newAdventure, title: e.target.value })}
+            />
+            <input
+                type="number"
+                placeholder="Interval in Weeks"
+                value={newAdventure.intervalInWeeks}
+                onChange={(e) => setNewAdventure({ ...newAdventure, intervalInWeeks: e.target.value })}
+            />
+            <button onClick={addTask}>Add Adventure</button>
         </div>
-      ))}
-    </div>
-  );
+    );
 };
 
 export default Adventures;
