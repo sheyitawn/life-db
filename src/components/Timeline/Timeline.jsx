@@ -69,15 +69,7 @@ const Timeline = () => {
       {/* Static Line */}
       <div className="timeline-static-line"></div>
 
-      {/* Moving Line */}
-      {/* {dynamicLinePosition !== -1 && (
-        <div
-          className="timeline-dynamic-line"
-          style={{
-            top: `${dynamicLinePosition * 15}%`,
-          }}
-        ></div>
-      )} */}
+
 
       <div className="timeline-dynamic-line"></div>
 

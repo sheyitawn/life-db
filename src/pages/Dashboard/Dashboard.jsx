@@ -6,13 +6,19 @@ import Timeline from '../../components/Timeline/Timeline';
 import Phases from '../../components/Phases/Phases'
 import MTest from '../../components/MTest'
 import Modal from '../../components/Modal/Modal';
+import Adventures from '../../components/Adventures/Adventures'
 import axios from "axios";
+import LifeInWeeks from '../../components/LifeInWeeks/LifeInWeeks'
+import adventures from '../../data/adventures.json'
+
 
 const Dashboard = () => {
   const [openModal, setOpenModal] = useState(null); // Track which modal is open
 
   const openSpecificModal = (modalName) => setOpenModal(modalName);
   const closeModal = () => setOpenModal(null);
+
+  const [adventures, setAdventures] = useState([]);
 
   const relationships = [
     {
@@ -43,13 +49,22 @@ const Dashboard = () => {
   const [weather, setWeather] = useState(null);
   const [hour, setHour] = useState(currentTime.getHours());
 
+
+  const [newAdventures, setNewAdventures] = useState(adventures);
+
+  const handleTaskUpdate = (taskId, updatedTask) => {
+    setNewAdventures((prevTasks) =>
+      prevTasks.map((task) => (task.id === taskId ? updatedTask : task))
+    );
+  };
+
   const weatherIconMap = {
     Clear: <FaSun />,
     Rain: <FaCloudRain />,
     Snow: <FaRegSnowflake />,
     Clouds: <FaCloud />,
     Wind: <FaWind />,
-    Default: <FaCloud />,
+    Default: <>n/a</>,
   };
 
   const parseDate = (dateString) => {
@@ -92,6 +107,13 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
+    fetch("/adventures.json")
+      .then((response) => response.json())
+      .then((data) => setNewAdventures(data))
+      .catch((error) => console.error("Error loading tasks:", error));
+  }, []);
+
+  useEffect(() => {
     // Update the time every second
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -105,7 +127,7 @@ const Dashboard = () => {
     // Fetch weather data
     const fetchWeather = async () => {
       const apiKey = "8354f869a30f01dbe895086726636e35";
-      const city = "Bristol, GB"; // Replace with desired city or use geolocation
+      const city = "Bristol,GB";
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
 
       try {
@@ -164,7 +186,7 @@ const Dashboard = () => {
           <div className="db-greeting">
             <h1>{greeting()}, Seyitan</h1>
             <h3>
-              Today is <b>{formattedDate}. </b> 
+              Today is <b onClick={() => openSpecificModal("lifeinweeks")}>{formattedDate}. </b> 
               {
                 
                 hour < 12 ? <>It’s time to start your day.</>: hour < 18 ? <>Adventure awaits!</>: <>Time to wind down.</>
@@ -172,6 +194,9 @@ const Dashboard = () => {
             </h3>
           </div>
         </div>
+        <Modal isOpen={openModal === "lifeinweeks"} onClose={closeModal}>
+        <LifeInWeeks dateOfBirth="2003-03-22" />
+        </Modal>
         <div className="db-main_content">
           <div className="db-main_content_timeline">
             <Timeline />
@@ -179,11 +204,15 @@ const Dashboard = () => {
           <div className="db-main_content_daily">
             <div>
               <h4>DAILY PROJECT GOAL</h4>
-              <p>Life Dashboard</p>
+              <p>Life Dashboard Backend</p>
             </div>
             <div>
               <h4>DAILY ADVENTURE</h4>
               <p>Roller skating in Castle Park</p>
+              <div onClick={() => openSpecificModal("adventures")}>see adventures</div>
+              <Modal isOpen={openModal === "adventures"} onClose={closeModal}>
+                <Adventures tasks={adventures} onUpdate={handleTaskUpdate} />
+              </Modal>
             </div>
           </div>
         </div>
@@ -200,17 +229,9 @@ const Dashboard = () => {
             <MTest />
           </Modal>
 
-          {/* Modal 2 */}
-          <Modal isOpen={openModal === "activities"} onClose={closeModal}>
-            <h1>activities</h1>
-            <p>This is the content for Modal 2.</p>
-          </Modal>
 
-          {/* Modal 3 */}
-          <Modal isOpen={openModal === "relationships"} onClose={closeModal}>
-            <h1>relationships</h1>
-            <p>This is the content for Modal 3.</p>
-          </Modal>
+
+
 
           {/* Modal 3 */}
           <Modal isOpen={openModal === "ideas"} onClose={closeModal}>
@@ -219,8 +240,13 @@ const Dashboard = () => {
           </Modal>
         </div>
         <div className="db-sidebar_fast">
-          You should aim for a 16 hour fast today.
-          <MdInfoOutline />
+          You should aim for a 20 hour fast today.
+          <MdInfoOutline onClick={() => openSpecificModal("fasting")}/>
+            {/* Modal 3 */}
+          <Modal isOpen={openModal === "fasting"} onClose={closeModal}>
+            <h1>fasting</h1>
+            <p>Since you are in the Follicular phase, it is recommended you fast for 20-24 hours.</p>
+          </Modal>
         </div>
         <div className="db-sidebar_activity">
           <div className="db-sidebar_activity_box">
@@ -228,8 +254,13 @@ const Dashboard = () => {
             <div className="db-sidebar_activity_content">Pool Swim</div>
           </div>
           <div className="db-sidebar-button" onClick={() => openSpecificModal("activities")}>more activities</div>
-
         </div>
+
+        <Modal isOpen={openModal === "activities"} onClose={closeModal}>
+            <h1>activities</h1>
+            <p>Here are the list of activities!</p>
+            <a href='https://www.youtube.com/watch?v=MYY4fGzvAJY' target='_blank'>Need some motivation?</a>
+          </Modal>
 
         <div className="db-sidebar_relationships">
           <div className="db-sidebar_relationships_box">
@@ -261,6 +292,33 @@ const Dashboard = () => {
           </div>
           <div className="db-sidebar-button" onClick={() => openSpecificModal("relationships")}>more relationships</div>
         </div>
+        <Modal isOpen={openModal === "relationships"} onClose={closeModal}>
+        {
+          progressData.map((relationship) => (
+            <div key={relationship.id}>
+              <div>
+                {relationship.name}
+                <p>
+                  {relationship.daysLeft > 0
+                    ? `Next call in ${relationship.daysLeft} day(s)`
+                    : 'Overdue! Call now.'}
+                </p>
+                <div className="db-sidebar_relationships_relation_content_progress">
+                  <div
+                    className="db-sidebar_relationships_relation_content_progress-bar"
+                    style={{
+                      width: `${relationship.progress * 100}%`,
+                      background: relationship.overdue ? '#ff6f61' : '#15BAC6', // Red if overdue
+                    }}
+                  />
+                </div>
+                <button>checked in</button>
+                <button>skip</button>
+              </div>
+            </div>
+          ))
+        }
+        </Modal>
         <div className="db-sidebar_ideas">
           <div className="db-sidebar_ideas_box">
             <h2>

@@ -1,0 +1,26 @@
+.life-in-weeks {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.life-in-weeks h2 {
+    margin: 0;
+    margin-bottom: .2rem;
+}
+
+.life-in-weeks_content {
+
+    display: grid;
+    grid-template-columns: repeat(52, 7px);
+    gap: 2px;
+}
+.week-box {
+    width: 5px;
+    height: 5px;
+    background-color: rgb(0, 0, 0);
+}
+.week-box.filled {
+    background-color: #C62915;
+}

@@ -1,7 +1,38 @@
-{
-    "id": "get chris flowers",
-    "title": "Try a new recipe",
-    "dueDate": "2024-12-21T00:00:00.000Z",
-    "intervalInWeeks": 2,
-    "status": "pending"
-}
+[
+    {
+      "id": "1",
+      "title": "Try a new recipe",
+      "dueDate": "2024-12-05T00:00:00.000Z",
+      "intervalInWeeks": 2,
+      "status": "pending"
+    },
+    {
+      "id": "2",
+      "title": "Read a new book",
+      "dueDate": "2024-12-10T00:00:00.000Z",
+      "intervalInWeeks": 4,
+      "status": "pending"
+    },
+    {
+      "id": "3",
+      "title": "Visit a museum",
+      "dueDate": "2024-11-25T00:00:00.000Z",
+      "intervalInWeeks": 6,
+      "status": "pending"
+    },
+    {
+      "id": "4",
+      "title": "Call an old friend",
+      "dueDate": "2024-12-15T00:00:00.000Z",
+      "intervalInWeeks": 3,
+      "status": "pending"
+    },
+    {
+      "id": "5",
+      "title": "Start a journal",
+      "dueDate": "2024-12-20T00:00:00.000Z",
+      "intervalInWeeks": 2,
+      "status": "pending"
+    }
+  ]
+  
