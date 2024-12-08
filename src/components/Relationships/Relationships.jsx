@@ -1,27 +1,76 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import apiRequest from '../../utils/apiRequest';
 
-const Relationships = ({ setRelationships }) => {
+const Relationships = forwardRef(({ setRelationships }, ref) => {
     const [relationships, setLocalRelationships] = useState([]);
 
-    // Fetch the 3 most due relationships
-    useEffect(() => {
-        const fetchMostDueRelationships = async () => {
-            try {
-                const response = await apiRequest('/relationships/most-due');
-                setLocalRelationships(response);
 
-                // Pass the most due relationships to the parent
-                if (setRelationships) {
-                    setRelationships(response);
-                }
-            } catch (error) {
-                console.error('Error fetching most due relationships:', error);
+    // Handle check-in action
+    const handleCheckIn = async (id) => {
+        try {
+            await apiRequest(`/relationships/relationships/${id}`, 'POST', { action: 'checked-in' });
+            // Refresh relationships after check-in
+            const response = await apiRequest('/relationships');
+            setRelationships(response);
+        } catch (error) {
+            console.error('Error updating relationship:', error);
+        }
+    };
+
+    // Handle skip action
+    const handleSkip = async (id) => {
+        try {
+            await apiRequest(`/relationships/relationships/${id}`, 'POST', { action: 'skip' });
+            // Refresh relationships after skip
+            const response = await apiRequest('/relationships');
+            setRelationships(response);
+        } catch (error) {
+            console.error('Error skipping relationship:', error);
+        }
+    };
+    
+
+    const fetchAllRelationships = async () => {
+        try {
+            const response = await apiRequest('/relationships/relationships');
+            setLocalRelationships(response);
+
+            // // Pass the most due relationships to the parent
+            // if (setRelationships) {
+            //     setRelationships(response);
+            // }
+        } catch (error) {
+            console.error('Error fetching most due relationships:', error);
+        }
+    };
+
+    const fetchMostDueRelationships = async () => {
+        console.error('fetching');
+
+        try {
+            const response = await apiRequest('/relationships/most-due');
+            // setLocalRelationships(response);
+
+            // Pass the most due relationships to the parent
+            if (setRelationships) {
+                setRelationships(response);
             }
-        };
+        } catch (error) {
+            console.error('Error fetching most due relationships:', error);
+        }
+    };
+
+
+    useImperativeHandle(ref, () => ({
+        fetchMostDueRelationships,
+    }));
+
+    useEffect(() => {
+
 
         fetchMostDueRelationships();
-    }, [setRelationships]); // Re-fetch if setRelationships changes
+        fetchAllRelationships()
+    }, [setLocalRelationships]); // Re-fetch if setRelationships changes
 
     return (
         <div className="db-sidebar_relationships">
@@ -48,13 +97,16 @@ const Relationships = ({ setRelationships }) => {
                                         }}
                                     />
                                 </div>
+                                
                             </div>
+                            <button onClick={() => handleCheckIn(relationship.id)}>Checked In</button>
+                                <button onClick={() => handleSkip(relationship.id)}>Skip</button>
                         </div>
                     ))}
                 </div>
             </div>
         </div>
     );
-};
+});
 
 export default Relationships;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './dashboard.css';
 import { FaRegSnowflake, FaSun, FaCloudRain, FaCloud, FaWind } from "react-icons/fa";
 import { MdLightbulb, MdInfoOutline } from 'react-icons/md';
@@ -25,34 +25,12 @@ const Dashboard = () => {
   const [mainActivity, setMainActivity] = useState(null);
   const [dailyGoal, setDailyGoal] = useState(null);
   const [mostDueRelationships, setMostDueRelationships] = useState([]);
+  // const relationshipsRef = useRef(null);
 
   const openSpecificModal = (modalName) => setOpenModal(modalName);
   const closeModal = () => setOpenModal(null);
 
 
-  // const relationships = [
-  //   {
-  //     id: 0,
-  //     name: 'daddy',
-  //     birthday: '04-11',
-  //     last_checkin: '2024-11-25',
-  //     checkin_freq: 'weekly',
-  //   },
-  //   {
-  //     id: 1,
-  //     name: 'mummy',
-  //     birthday: '11-11',
-  //     last_checkin: '2024-12-06',
-  //     checkin_freq: 'weekly',
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'grandparents (m)',
-  //     birthday: '12-34',
-  //     last_checkin: '2024-12-03',
-  //     checkin_freq: 'weekly',
-  //   },
-  // ];
 
   const [progressData, setProgressData] = useState([]);
   
@@ -155,23 +133,14 @@ const Dashboard = () => {
   }, []);
 
 
-  // relationship -> move to backend
   // useEffect(() => {
-  //   // Update progress data every second
-  //   const interval = setInterval(() => {
-  //     const updatedProgress = relationships.map((relationship) => {
-  //       const { progress, daysLeft, overdue } = calculateProgress(
-  //         relationship.last_checkin,
-  //         relationship.checkin_freq
-  //       );
-  //       return { ...relationship, progress, daysLeft, overdue };
-  //     });
-  //     setProgressData(updatedProgress);
-  //   }, 1000);
-
-  //   // Clear the interval on component unmount
-  //   return () => clearInterval(interval);
-  // }, [relationships]);
+  //   const refreshRelationships = () => {
+  //     if (relationshipsRef.current && relationshipsRef.current.fetchMostDueRelationships) {
+  //         relationshipsRef.current.fetchMostDueRelationships();
+  //     }
+  // };;
+//   refreshRelationships()
+// }, []);
 
  
 
@@ -184,7 +153,7 @@ const Dashboard = () => {
             {weather ? weatherIconMap[weather] || weatherIconMap.Default : <FaCloud />}
           </div>
           <div className="db-greeting">
-            <h1>{greeting()}, Seyitan</h1>
+            <h1>{greeting()}, Seyitan.</h1>
             <h3>
               Today is <b onClick={() => openSpecificModal("lifeinweeks")}>{formattedDate}. </b> 
               {
@@ -240,6 +209,7 @@ const Dashboard = () => {
           {/* Modal 1 */}
           <Modal isOpen={openModal === "phases"} onClose={closeModal}>
             <h1>phases</h1>
+            You shoukd feel (feeling during phase), however, dont let this define you! This is just a reminder that it is normal to feel like this during this time. Utilize this knowledge and change your perspective!
             <MTest />
           </Modal>
 
@@ -307,7 +277,7 @@ const Dashboard = () => {
                   <MdInfoOutline />
                 </div>
               ))}
-
+{/* <button onClick={refreshRelationships}>Refresh Relationships</button> */}
 
 
 
@@ -341,7 +311,7 @@ const Dashboard = () => {
             </div>
           ))
         } */}
-          <Relationships  setRelationships={setMostDueRelationships}/>
+          <Relationships setRelationships={setMostDueRelationships}/>
         </Modal>
         <div className="db-sidebar_ideas">
           <div className="db-sidebar_ideas_box">
