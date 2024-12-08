@@ -9,54 +9,54 @@ import Modal from '../../components/Modal/Modal';
 import Adventures from '../../components/Adventures/Adventures'
 import axios from "axios";
 import LifeInWeeks from '../../components/LifeInWeeks/LifeInWeeks'
-import adventures from '../../data/adventures.json'
+import DailyGoal from '../../components/DailyGoal/DailyGoal'
+import Activities from '../../components/Activities/Activities';
+import Relationships from '../../components/Relationships/Relationships';
+import apiRequest from '../../utils/apiRequest';
 
 
 const Dashboard = () => {
-  const [openModal, setOpenModal] = useState(null); // Track which modal is open
-
-  const openSpecificModal = (modalName) => setOpenModal(modalName);
-  const closeModal = () => setOpenModal(null);
-
-  const [adventures, setAdventures] = useState([]);
-
-  const relationships = [
-    {
-      id: 0,
-      name: 'daddy',
-      birthday: '04-11',
-      last_checkin: '2024-11-25',
-      checkin_freq: 'weekly',
-    },
-    {
-      id: 1,
-      name: 'mummy',
-      birthday: '11-11',
-      last_checkin: '2024-12-06',
-      checkin_freq: 'weekly',
-    },
-    {
-      id: 2,
-      name: 'grandparents (m)',
-      birthday: '12-34',
-      last_checkin: '2024-12-03',
-      checkin_freq: 'weekly',
-    },
-  ];
-
-  const [progressData, setProgressData] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [weather, setWeather] = useState(null);
   const [hour, setHour] = useState(currentTime.getHours());
 
+  const [openModal, setOpenModal] = useState(null); // Track which modal is open
+  const [mainAdventure, setMainAdventure] = useState(null);
+  const [mainActivity, setMainActivity] = useState(null);
+  const [dailyGoal, setDailyGoal] = useState(null);
+  const [mostDueRelationships, setMostDueRelationships] = useState([]);
 
-  const [newAdventures, setNewAdventures] = useState(adventures);
+  const openSpecificModal = (modalName) => setOpenModal(modalName);
+  const closeModal = () => setOpenModal(null);
 
-  const handleTaskUpdate = (taskId, updatedTask) => {
-    setNewAdventures((prevTasks) =>
-      prevTasks.map((task) => (task.id === taskId ? updatedTask : task))
-    );
-  };
+
+  // const relationships = [
+  //   {
+  //     id: 0,
+  //     name: 'daddy',
+  //     birthday: '04-11',
+  //     last_checkin: '2024-11-25',
+  //     checkin_freq: 'weekly',
+  //   },
+  //   {
+  //     id: 1,
+  //     name: 'mummy',
+  //     birthday: '11-11',
+  //     last_checkin: '2024-12-06',
+  //     checkin_freq: 'weekly',
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'grandparents (m)',
+  //     birthday: '12-34',
+  //     last_checkin: '2024-12-03',
+  //     checkin_freq: 'weekly',
+  //   },
+  // ];
+
+  const [progressData, setProgressData] = useState([]);
+  
+
 
   const weatherIconMap = {
     Clear: <FaSun />,
@@ -72,17 +72,17 @@ const Dashboard = () => {
     return new Date(year, month - 1, day);
   };
 
-  const calculateProgress = (lastCheckin, frequency) => {
-    const now = new Date();
-    const lastCheckinDate = parseDate(lastCheckin);
-    const daysSinceCheckin = Math.ceil((now - lastCheckinDate) / (1000 * 60 * 60 * 24));
-    const frequencyDays = frequency === 'weekly' ? 7 : 1; // Adjust for other frequencies if needed
+  // const calculateProgress = (lastCheckin, frequency) => {
+  //   const now = new Date();
+  //   const lastCheckinDate = parseDate(lastCheckin);
+  //   const daysSinceCheckin = Math.ceil((now - lastCheckinDate) / (1000 * 60 * 60 * 24));
+  //   const frequencyDays = frequency === 'weekly' ? 7 : 1; // Adjust for other frequencies if needed
 
-    const progress = Math.min(daysSinceCheckin / frequencyDays, 1); // Progress percentage capped at 100%
-    const daysLeft = Math.max(frequencyDays - daysSinceCheckin, 0); // Days until the next call
+  //   const progress = Math.min(daysSinceCheckin / frequencyDays, 1); // Progress percentage capped at 100%
+  //   const daysLeft = Math.max(frequencyDays - daysSinceCheckin, 0); // Days until the next call
 
-    return { progress, daysLeft, overdue: daysSinceCheckin >= frequencyDays };
-  };
+  //   return { progress, daysLeft, overdue: daysSinceCheckin >= frequencyDays };
+  // };
 
   const greeting = () => {
     // const hour = currentTime.getHours();
@@ -106,15 +106,8 @@ const Dashboard = () => {
     day: "numeric",
   });
 
+  // Update the time every second
   useEffect(() => {
-    fetch("/adventures.json")
-      .then((response) => response.json())
-      .then((data) => setNewAdventures(data))
-      .catch((error) => console.error("Error loading tasks:", error));
-  }, []);
-
-  useEffect(() => {
-    // Update the time every second
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
@@ -123,8 +116,26 @@ const Dashboard = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // Fetch daily goal
   useEffect(() => {
-    // Fetch weather data
+      const fetchGoal = async () => {
+          try {
+              // Format current date as YYYY-MM-DD
+              const today = currentTime.toISOString().split('T')[0];
+              const response = await apiRequest(`/goals/daily-goal?date=${today}`);
+              setDailyGoal(response.goal);
+          } catch (error) {
+              console.error('Error fetching daily goal:', error);
+              setDailyGoal(null); // Clear goal if an error occurs
+          }
+      };
+
+      fetchGoal();
+  }, [currentTime]); // Re-fetch when currentTime changes
+
+  
+// Fetch weather data
+  useEffect(() => {
     const fetchWeather = async () => {
       const apiKey = "8354f869a30f01dbe895086726636e35";
       const city = "Bristol,GB";
@@ -143,35 +154,24 @@ const Dashboard = () => {
     fetchWeather();
   }, []);
 
-  useEffect(() => {
-    // Update progress data every second
-    const interval = setInterval(() => {
-      const updatedProgress = relationships.map((relationship) => {
-        const { progress, daysLeft, overdue } = calculateProgress(
-          relationship.last_checkin,
-          relationship.checkin_freq
-        );
-        return { ...relationship, progress, daysLeft, overdue };
-      });
-      setProgressData(updatedProgress);
-    }, 1000);
 
-    // Clear the interval on component unmount
-    return () => clearInterval(interval);
-  }, [relationships]);
+  // relationship -> move to backend
+  // useEffect(() => {
+  //   // Update progress data every second
+  //   const interval = setInterval(() => {
+  //     const updatedProgress = relationships.map((relationship) => {
+  //       const { progress, daysLeft, overdue } = calculateProgress(
+  //         relationship.last_checkin,
+  //         relationship.checkin_freq
+  //       );
+  //       return { ...relationship, progress, daysLeft, overdue };
+  //     });
+  //     setProgressData(updatedProgress);
+  //   }, 1000);
 
-
-  useEffect(() => {
-    // Update the time every second
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    // Cleanup the timer on component unmount
-    return () => clearInterval(timer);
-  }, []);
-
-
+  //   // Clear the interval on component unmount
+  //   return () => clearInterval(interval);
+  // }, [relationships]);
 
  
 
@@ -180,7 +180,7 @@ const Dashboard = () => {
       <div className="db-main">
         <div className="db-main_header">
           <div className="db-info">
-            <h2>{formattedTime}</h2>
+            <h2>{currentTime.toLocaleTimeString()}</h2>
             {weather ? weatherIconMap[weather] || weatherIconMap.Default : <FaCloud />}
           </div>
           <div className="db-greeting">
@@ -195,7 +195,7 @@ const Dashboard = () => {
           </div>
         </div>
         <Modal isOpen={openModal === "lifeinweeks"} onClose={closeModal}>
-        <LifeInWeeks dateOfBirth="2003-03-22" />
+          <LifeInWeeks dateOfBirth="2003-03-22" />
         </Modal>
         <div className="db-main_content">
           <div className="db-main_content_timeline">
@@ -204,14 +204,28 @@ const Dashboard = () => {
           <div className="db-main_content_daily">
             <div>
               <h4>DAILY PROJECT GOAL</h4>
-              <p>Life Dashboard Backend</p>
+                <div onClick={() => openSpecificModal("daily")}>
+                  {
+                    dailyGoal ? (
+                      <p>{dailyGoal.goal}</p>
+                    ) : (
+                      <p>No goal set for today.</p>
+                    )
+                  }
+                </div>
+
+                <Modal isOpen={openModal === "daily"} onClose={closeModal}>
+                  <DailyGoal />
+                </Modal>
             </div>
             <div>
               <h4>DAILY ADVENTURE</h4>
-              <p>Roller skating in Castle Park</p>
+              
+              {mainAdventure && (<p>{mainAdventure.title}</p>)}
+
               <div onClick={() => openSpecificModal("adventures")}>see adventures</div>
               <Modal isOpen={openModal === "adventures"} onClose={closeModal}>
-                <Adventures tasks={adventures} onUpdate={handleTaskUpdate} />
+                <Adventures setAdventure={setMainAdventure} />
               </Modal>
             </div>
           </div>
@@ -251,7 +265,11 @@ const Dashboard = () => {
         <div className="db-sidebar_activity">
           <div className="db-sidebar_activity_box">
             <div className="db-sidebar_activity_header">RECOMMENDED ACTIVITY:</div>
-            <div className="db-sidebar_activity_content">Pool Swim</div>
+            <div className="db-sidebar_activity_content">
+              {mainActivity && (
+                <p>{mainActivity.title}</p>
+              )}
+            </div>
           </div>
           <div className="db-sidebar-button" onClick={() => openSpecificModal("activities")}>more activities</div>
         </div>
@@ -260,13 +278,14 @@ const Dashboard = () => {
             <h1>activities</h1>
             <p>Here are the list of activities!</p>
             <a href='https://www.youtube.com/watch?v=MYY4fGzvAJY' target='_blank'>Need some motivation?</a>
+            <Activities setActivity={setMainActivity} />
           </Modal>
 
         <div className="db-sidebar_relationships">
           <div className="db-sidebar_relationships_box">
             <div className="db-sidebar_relationships_header">RECOMMENDED CHECK-INS:</div>
             <div className="db-sidebar_relationships_relations">
-              {progressData.map((relationship) => (
+              {mostDueRelationships.map((relationship) => (
                 <div key={relationship.id} className="db-sidebar_relationships_relation">
                   <div className="db-sidebar_relationships_relation_content">
                     {relationship.name}
@@ -288,12 +307,16 @@ const Dashboard = () => {
                   <MdInfoOutline />
                 </div>
               ))}
+
+
+
+
             </div>
           </div>
           <div className="db-sidebar-button" onClick={() => openSpecificModal("relationships")}>more relationships</div>
         </div>
         <Modal isOpen={openModal === "relationships"} onClose={closeModal}>
-        {
+        {/* {
           progressData.map((relationship) => (
             <div key={relationship.id}>
               <div>
@@ -317,7 +340,8 @@ const Dashboard = () => {
               </div>
             </div>
           ))
-        }
+        } */}
+          <Relationships  setRelationships={setMostDueRelationships}/>
         </Modal>
         <div className="db-sidebar_ideas">
           <div className="db-sidebar_ideas_box">
