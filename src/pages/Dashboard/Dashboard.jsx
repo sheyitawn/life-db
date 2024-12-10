@@ -14,6 +14,8 @@ import Activities from '../../components/Activities/Activities';
 import Relationships from '../../components/Relationships/Relationships';
 import apiRequest from '../../utils/apiRequest';
 
+const weatherAPI = process.env.REACT_APP_WEATHER_API;
+const weatherLOC = process.env.REACT_APP_WEATHER_LOC;
 
 const Dashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -115,10 +117,11 @@ const Dashboard = () => {
 // Fetch weather data
   useEffect(() => {
     const fetchWeather = async () => {
-      const apiKey = "8354f869a30f01dbe895086726636e35";
-      const city = "Bristol,GB";
+      const apiKey = weatherAPI;
+      const city = weatherLOC;
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
 
+      console.log("🚀 ~ fetchWeather ~ url:", url)
       try {
         const response = await axios.get(url);
         const weatherCondition = response.data.weather[0].main;
