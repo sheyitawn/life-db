@@ -19,12 +19,3 @@ const apiRequest = async (endpoint, method = 'GET', data = null) => {
 };
 
 export default apiRequest;
-
-// export const fetchData = async () => {
-//     return await apiRequest('/data');
-// };
-
-// export const saveData = async (newData) => {
-//     return await apiRequest('/data', 'POST', newData);
-// };
-
