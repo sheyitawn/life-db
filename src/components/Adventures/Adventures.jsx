@@ -6,7 +6,6 @@ const Adventures = ({ setAdventure }) => {
     const [otherRecommendations, setOtherRecommendations] = useState([]);
     const [newAdventure, setNewAdventure] = useState({ title: '', intervalInWeeks: '' });
 
-    // Fetch recommendations from the backend
     useEffect(() => {
         const fetchRecommendations = async () => {
             try {
@@ -15,9 +14,9 @@ const Adventures = ({ setAdventure }) => {
                 setOtherRecommendations(response.others);
 
                 // Pass the main recommendation to the parent
-                if (setAdventure) {
-                    setAdventure(response.main);
-                }
+                // if (setAdventure) {
+                //     setAdventure(response.main);
+                // }
             } catch (error) {
                 console.error('Error fetching recommendations:', error);
             }

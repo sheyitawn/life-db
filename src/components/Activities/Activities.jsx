@@ -14,10 +14,6 @@ const Activities = ({ setActivity }) => {
                 setMainActivity(response.main);
                 setOtherActivities(response.others);
 
-                // Pass the main activity to the parent
-                if (setActivity) {
-                    setActivity(response.main);
-                }
             } catch (error) {
                 console.error('Error fetching activities:', error);
             }
