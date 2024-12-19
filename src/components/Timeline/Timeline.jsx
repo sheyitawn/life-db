@@ -1,103 +1,153 @@
 import React, { useState, useEffect } from "react";
+import apiRequest from "../../utils/apiRequest.js";
 import "./timeline.css";
 
 const Timeline = () => {
-  const [currentTime, setCurrentTime] = useState(new Date());
+    const [timeline, setTimeline] = useState([]); // Original timeline
+    const [adjustedTimeline, setAdjustedTimeline] = useState([]); // Adjusted for late days
+    const [currentTaskIndex, setCurrentTaskIndex] = useState(null);
+    const [isLateDays, setIsLateDays] = useState(false); // Late days toggle
 
-  const tasks = [
-    { time: "06:30", label: "rise & shine" },
-    { time: "06:32", label: "pee, weigh in" },
-    { time: "06:35", label: "hydrate" },
-    { time: "06:40", label: "15-20 min walk" },
-    { time: "07:00", label: "prep some tea" },
-    { time: "07:10", label: "journal" },
-    { time: "07:30", label: "warm up" },
-    { time: "08:30", label: "project work" },
-    { time: "12:00", label: "activity/ social" },
-    { time: "13:30", label: "focused work" },
-    { time: "15:30", label: "skill dev" },
-    { time: "16:00", label: "activity" },
-    { time: "17:30", label: "social" },
-    { time: "18:30", label: "dinner" },
-    { time: "19:30", label: "wind down" },
-    { time: "20:30", label: "leisure time" },
-    { time: "21:30", label: "shower" },
-    { time: "21:50", label: "stretch" },
-    { time: "21:55", label: "5 min clean" },
-    { time: "22:00", label: "sleep" },
-  ];
+    useEffect(() => {
+        // Fetch timeline data on mount
+        const fetchTimeline = async () => {
+            try {
+                const data = await apiRequest("/timeline");
+                setTimeline(data);
+                setAdjustedTimeline(data); // Initialize adjusted timeline
+            } catch (error) {
+                console.error("Error fetching timeline:", error);
+            }
+        };
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000); // Update every minute
-    return () => clearInterval(timer);
-  }, []);
+        fetchTimeline();
+    }, []);
 
-  const getMinutesOfDay = (time) => {
-    const [hours, minutes] = time.split(":").map(Number);
-    return hours * 60 + minutes;
-  };
+    useEffect(() => {
+        // Recalculate current task index periodically
+        const updateCurrentTask = () => {
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
-  const getCurrentTaskIndex = () => {
-    const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
-    return tasks.findIndex((task, index) => {
-      const taskMinutes = getMinutesOfDay(task.time);
-      const nextTaskMinutes =
-        index + 1 < tasks.length ? getMinutesOfDay(tasks[index + 1].time) : Infinity;
-      return currentMinutes >= taskMinutes && currentMinutes < nextTaskMinutes;
-    });
-  };
+            const currentIndex = adjustedTimeline.findIndex((task, index) => {
+                const taskMinutes = getMinutesOfDay(task.time);
+                const nextTaskMinutes =
+                    index + 1 < adjustedTimeline.length
+                        ? getMinutesOfDay(adjustedTimeline[index + 1].time)
+                        : Infinity;
 
-  const currentTaskIndex = getCurrentTaskIndex();
-  const startIndex = Math.max(currentTaskIndex - 3, 0);
-  const endIndex = Math.min(startIndex + 7, tasks.length);
-  const visibleTasks = tasks.slice(startIndex, endIndex);
+                return currentMinutes >= taskMinutes && currentMinutes < nextTaskMinutes;
+            });
 
-  const dynamicLinePosition = visibleTasks.findIndex(
-    (task) => task.time === tasks[currentTaskIndex]?.time
-  );
+            setCurrentTaskIndex(currentIndex);
 
-  const isTaskCompleted = (taskTime) => {
-    const taskMinutes = getMinutesOfDay(taskTime);
-    const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
-    return taskMinutes <= currentMinutes;
-  };
+            // Reset to original timeline if last task is completed
+            if (isLateDays && currentIndex === -1) {
+                setIsLateDays(false);
+                setAdjustedTimeline(timeline);
+            }
+        };
 
-  return (
-    <div className="timeline">
-      {/* Static Line */}
-      <div className="timeline-static-line"></div>
+        updateCurrentTask();
+        const interval = setInterval(updateCurrentTask, 60000); // Check every minute
+        return () => clearInterval(interval);
+    }, [adjustedTimeline, isLateDays, timeline]);
 
+    const getMinutesOfDay = (time) => {
+        const [hours, minutes] = time.split(":").map(Number);
+        return hours * 60 + minutes;
+    };
 
+    const formatTime = (minutes) => {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return `${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+    };
 
-      <div className="timeline-dynamic-line"></div>
+    const handleLateDays = () => {
+        if (isLateDays) {
+            // Reset to original timeline
+            setIsLateDays(false);
+            setAdjustedTimeline(timeline);
+        } else {
+            // Adjust timeline based on current time
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
-      {/* Tasks */}
-      {visibleTasks.map((task, index) => (
-        <div
-          key={index}
-          className="task"
-          style={{
-            top: `${index * 15}%`, // Space tasks evenly
-          }}
-        >
-          <div
-            className="task-circle"
-            style={{
-              backgroundColor: isTaskCompleted(task.time)
-                ? "#C62915" // Completed task color
-                : "#ffffff", // Uncompleted task color
-            }}
-          ></div>
-          <div className="task-content">
-            <span className="task-time">{task.time}</span>
-            <span className="task-label">{task.label}</span>
-          </div>
+            let adjustedMinutes = currentMinutes;
+            const newTimeline = timeline.map((task) => {
+                const duration = getMinutesOfDay(task.time) - getMinutesOfDay(timeline[0].time);
+                const newTime = adjustedMinutes;
+                adjustedMinutes += duration;
+                return { ...task, time: formatTime(newTime) };
+            });
+
+            setIsLateDays(true);
+            setAdjustedTimeline(newTimeline);
+        }
+    };
+
+    const centerIndex = 3; // Center current task in the middle of visible tasks
+    const visibleTaskCount = 7; // Number of tasks to display
+    const startIndex = Math.max(currentTaskIndex - centerIndex, 0);
+    const endIndex = Math.min(
+        startIndex + visibleTaskCount,
+        adjustedTimeline.length
+    );
+
+    const visibleTasks = adjustedTimeline.slice(startIndex, endIndex);
+
+    const isTaskCompleted = (taskTime) => {
+        const taskMinutes = getMinutesOfDay(taskTime);
+        const currentMinutes = new Date().getHours() * 60 + new Date().getMinutes();
+        return taskMinutes <= currentMinutes;
+    };
+
+    return (
+        <div className="timeline">
+            {/* Late Days Button */}
+            <button className="late-days-button" onClick={handleLateDays}>
+                {isLateDays ? "Reset to Normal" : "Start Late Day"}
+            </button>
+
+            {/* Static Line */}
+            <div className="timeline-static-line"></div>
+            {/* Moving Line */}
+            {visibleTasks.length}
+            {visibleTasks && (
+              <div
+                className="timeline-dynamic-line"
+                style={{
+                  height: `${visibleTasks.length * .9}rem`
+                }}
+              ></div>
+            )}
+
+            {/* Tasks */}
+            {visibleTasks.map((task, index) => (
+                <div
+                    key={index}
+                    className="task"
+                    style={{
+                        top: `${(index - centerIndex) * 15 + 50}%`, // Center current task
+                    }}
+                >
+                    <div
+                        className="task-circle"
+                        style={{
+                            backgroundColor: isTaskCompleted(task.time)
+                                ? "#C62915" // Completed task color
+                                : "#ffffff", // Uncompleted task color
+                        }}
+                    ></div>
+                    <div className="task-content">
+                        <span className="task-time">{task.time}</span>
+                        <span className="task-label">{task.task}</span>
+                    </div>
+                </div>
+            ))}
         </div>
-      ))}
-    </div>
-  );
+    );
 };
 
 export default Timeline;
