@@ -4,7 +4,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.93);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,11 +15,13 @@
     background: var(--box);
     padding: 20px;
     border-radius: 30px;
-    width: 90%;
-    max-width: 700px;
+    width: 60%;
+    height: 60%;
+    /* max-width: 700px; */
     position: relative;
     color: white;
     z-index: 1001;
+    border: 2px solid ;
 
 }
 
