@@ -86,6 +86,51 @@ const Dashboard = () => {
     day: "numeric",
   });
 
+  // get main activity
+  useEffect(() => {
+    const fetchActivities = async () => {
+        try {
+          const response = await apiRequest('/activities/recommendations');
+          setMainActivity(response.main);
+        } catch (error) {
+          console.error('Error fetching activities:', error);
+        }
+    };
+    fetchActivities();
+}, []);
+
+// get most due relationships
+useEffect(() => {
+  const fetchMostDueRelationships = async () => {
+    try {
+    const response = await apiRequest('/relationships/most-due');
+    setMostDueRelationships(response)
+    } catch (error) {
+        console.error('Error fetching most due relationships:', error);
+      }
+  };
+  fetchMostDueRelationships();
+}, []);
+
+// get recommended adventure
+useEffect(() => {
+  const fetchRecommendations = async () => {
+      try {
+          const response = await apiRequest('/adventures/recommendations');
+          setMainAdventure(response.main);
+          // setOtherRecommendations(response.others);
+
+          // // Pass the main recommendation to the parent
+          // if (setAdventure) {
+          //     setAdventure(response.main);
+          // }
+      } catch (error) {
+          console.error('Error fetching recommendations:', error);
+      }
+  };
+  fetchRecommendations();
+}, []);
+
   // Update the time every second
   useEffect(() => {
     const timer = setInterval(() => {
