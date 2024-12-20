@@ -1,0 +1,30 @@
+.activities {
+    padding: 1rem;
+    color: white;
+}
+
+.activities p a{
+    color: white;
+}
+
+.activities-activity {
+    background-color: #000;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+    margin: .5rem 0;
+
+}
+
+.activities-activity button{
+    background-color: #C62915;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: .2rem .9rem;
+    font-size: 1em;
+    color: white;
+    border: none;
+    
+}
