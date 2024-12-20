@@ -14,7 +14,7 @@
 .modal-content {
     background: var(--box);
     padding: 20px;
-    border-radius: 30px;
+    border-radius: 20px;
     width: 60%;
     height: 60%;
     /* max-width: 700px; */
