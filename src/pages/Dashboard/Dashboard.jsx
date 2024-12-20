@@ -293,9 +293,8 @@ useEffect(() => {
         </div>
 
         <Modal isOpen={openModal === "activities"} onClose={closeModal}>
-            <h1>activities</h1>
-            <p>Here are the list of activities!</p>
-            <a href='https://www.youtube.com/watch?v=MYY4fGzvAJY' target='_blank'>Need some motivation?</a>
+            {/* <h1>activities</h1> */}
+
             <Activities setActivity={setMainActivity} />
           </Modal>
 
