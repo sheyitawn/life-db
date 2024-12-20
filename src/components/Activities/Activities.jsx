@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiRequest from '../../utils/apiRequest';
+import './activities.css'
 
 const Activities = ({ setActivity }) => {
     const [mainActivity, setMainActivity] = useState(null);
@@ -62,29 +63,32 @@ const Activities = ({ setActivity }) => {
     };
 
     return (
-        <div>
-            <h3>Today's Activity Recommendation</h3>
+        <div className='activities'>
+            <h1>activities</h1>
+
+            <p>Here are the list of activities! <a href='https://www.youtube.com/watch?v=MYY4fGzvAJY' target='_blank'>Need some motivation?</a></p>
+            
             {mainActivity ? (
-                <div>
+                <div className='activities-activity'>
                     <h4>{mainActivity.title}</h4>
                     <button
                         onClick={() => updateActivity(mainActivity.id, { lastDone: new Date().toISOString(), status: 'done' })}
                     >
-                        Mark as Done
+                        DONE
                     </button>
                 </div>
             ) : (
                 <p>No activities due today.</p>
             )}
 
-            <h3>Other Activities</h3>
+            <h3>other activities</h3>
             {otherActivities.map((activity) => (
-                <div key={activity.id}>
+                <div key={activity.id}  className='activities-activity'>
                     <h4>{activity.title}</h4>
                     <button
                         onClick={() => updateActivity(activity.id, { lastDone: new Date().toISOString(), status: 'done' })}
                     >
-                        Mark as Done
+                        DONE
                     </button>
                 </div>
             ))}
