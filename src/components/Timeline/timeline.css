@@ -1,9 +1,11 @@
 .timeline {
     position: relative;
-    width: 300px;
-    height: 115%;
+    width: 10rem;
+    height: 95%;
     margin: 0 auto;
     /* background-color: #C62915; */
+    /* display: flex; */
+    /* flex-direction: column; */
 }
   
 .timeline-static-line {
@@ -62,4 +64,25 @@
     background-color: #C62915;
     border-radius: 50%;
     margin-right: 10px;
+}
+
+
+.timeline-late-button {
+    background-color: #C62915;
+    margin: 2rem 0;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    padding: .3rem .5rem;
+    font-weight: bold;
+}
+
+.timeline-late-button:hover {
+    background-color: #a32312;
+
+}
+
+.timeline-button-clicked {
+    background-color:rgb(28, 7, 4);
+    color: #2d2c2c;
 }
