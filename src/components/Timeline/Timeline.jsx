@@ -40,18 +40,12 @@ const Timeline = () => {
             });
 
             setCurrentTaskIndex(currentIndex);
-
-            // Reset to original timeline if last task is completed
-            if (isLateDays && currentIndex === -1) {
-                setIsLateDays(false);
-                setAdjustedTimeline(timeline);
-            }
         };
 
         updateCurrentTask();
         const interval = setInterval(updateCurrentTask, 60000); // Check every minute
         return () => clearInterval(interval);
-    }, [adjustedTimeline, isLateDays, timeline]);
+    }, [adjustedTimeline]);
 
     const getMinutesOfDay = (time) => {
         const [hours, minutes] = time.split(":").map(Number);
@@ -64,28 +58,34 @@ const Timeline = () => {
         return `${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
     };
 
-    const handleLateDays = () => {
-        if (isLateDays) {
-            // Reset to original timeline
-            setIsLateDays(false);
-            setAdjustedTimeline(timeline);
-        } else {
-            // Adjust timeline based on current time
-            const now = new Date();
-            const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-            let adjustedMinutes = currentMinutes;
-            const newTimeline = timeline.map((task) => {
-                const duration = getMinutesOfDay(task.time) - getMinutesOfDay(timeline[0].time);
-                const newTime = adjustedMinutes;
-                adjustedMinutes += duration;
-                return { ...task, time: formatTime(newTime) };
+    const handleLateDays = async () => {
+        const today = new Date().toISOString().split("T")[0];
+        const now = new Date();
+        const currentTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
+    
+        try {
+            // Log the payload for debugging
+            console.log("🚀 ~ Sending to toggle late day:", { date: today, "late-day": currentTime });
+    
+            // Send current date and time to toggle late day
+            const response = await apiRequest("/goals/toggle-late-day", "POST", {
+                date: today,
+                "late-day": currentTime,
             });
-
-            setIsLateDays(true);
-            setAdjustedTimeline(newTimeline);
+    
+            // Update the late day status
+            setIsLateDays(response.goal["late-day"] !== null);
+    
+            // Fetch the updated timeline
+            const updatedTimeline = await apiRequest("/timeline");
+            setAdjustedTimeline(updatedTimeline);
+            console.log("🚀 ~ handleLateDays ~ updatedTimeline:", updatedTimeline);
+    
+        } catch (error) {
+            console.error("Error toggling late day:", error);
         }
     };
+    
 
     const centerIndex = 3; // Center current task in the middle of visible tasks
     const visibleTaskCount = 7; // Number of tasks to display
@@ -104,49 +104,45 @@ const Timeline = () => {
     };
 
     return (
-        <div className="timeline">
-            {/* Late Days Button */}
-            <button className="late-days-button" onClick={handleLateDays}>
-                {isLateDays ? "Reset to Normal" : "Start Late Day"}
-            </button>
+        <>
+            <div className="timeline">
+                
 
-            {/* Static Line */}
-            <div className="timeline-static-line"></div>
-            {/* Moving Line */}
-            {visibleTasks.length}
-            {visibleTasks && (
-              <div
-                className="timeline-dynamic-line"
-                style={{
-                  height: `${visibleTasks.length * .9}rem`
-                }}
-              ></div>
-            )}
+                {/* Static Line */}
+                <div className="timeline-static-line"></div>
 
-            {/* Tasks */}
-            {visibleTasks.map((task, index) => (
-                <div
-                    key={index}
-                    className="task"
-                    style={{
-                        top: `${(index - centerIndex) * 15 + 50}%`, // Center current task
-                    }}
-                >
+                {/* Tasks */}
+                {visibleTasks.map((task, index) => (
                     <div
-                        className="task-circle"
+                        key={index}
+                        className="task"
                         style={{
-                            backgroundColor: isTaskCompleted(task.time)
-                                ? "#C62915" // Completed task color
-                                : "#ffffff", // Uncompleted task color
+                            top: `${(index - centerIndex) * 15 + 50}%`, // Center current task
                         }}
-                    ></div>
-                    <div className="task-content">
-                        <span className="task-time">{task.time}</span>
-                        <span className="task-label">{task.task}</span>
+                    >
+                        <div
+                            className="task-circle"
+                            style={{
+                                backgroundColor: isTaskCompleted(task.time)
+                                    ? "#C62915" // Completed task color
+                                    : "#ffffff", // Uncompleted task color
+                            }}
+                        ></div>
+                        <div className="task-content">
+                            <span className="task-time">{task.time}</span>
+                            <span className="task-label">{task.task}</span>
+                        </div>
                     </div>
-                </div>
-            ))}
-        </div>
+                ))}
+
+                
+                
+            </div>
+            {/* Late Days Button */}
+            <button className={isLateDays ? "timeline-late-button timeline-button-clicked" : "timeline-late-button"} onClick={handleLateDays}>
+                {isLateDays ? "RESET" : "PUSH BACK"}
+            </button>
+        </>
     );
 };
 
