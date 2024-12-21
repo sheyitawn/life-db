@@ -1,8 +1,10 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import apiRequest from '../../utils/apiRequest';
+import { toast } from 'react-toastify';
+import './relationships.css'
 
-const Relationships = forwardRef(({ setRelationships }, ref) => {
-    const [relationships, setLocalRelationships] = useState([]);
+const Relationships = () => {
+    const [relationships, setRelationships] = useState([]);
 
 
     // Handle check-in action
@@ -10,8 +12,9 @@ const Relationships = forwardRef(({ setRelationships }, ref) => {
         try {
             await apiRequest(`/relationships/relationships/${id}`, 'POST', { action: 'checked-in' });
             // Refresh relationships after check-in
-            const response = await apiRequest('/relationships');
+            const response = await apiRequest('/relationships/relationships');
             setRelationships(response);
+            toast("checked in")
         } catch (error) {
             console.error('Error updating relationship:', error);
         }
@@ -22,8 +25,9 @@ const Relationships = forwardRef(({ setRelationships }, ref) => {
         try {
             await apiRequest(`/relationships/relationships/${id}`, 'POST', { action: 'skip' });
             // Refresh relationships after skip
-            const response = await apiRequest('/relationships');
+            const response = await apiRequest('/relationships/relationships');
             setRelationships(response);
+            toast("skipped. try to call next time.")
         } catch (error) {
             console.error('Error skipping relationship:', error);
         }
@@ -33,7 +37,7 @@ const Relationships = forwardRef(({ setRelationships }, ref) => {
     const fetchAllRelationships = async () => {
         try {
             const response = await apiRequest('/relationships/relationships');
-            setLocalRelationships(response);
+            setRelationships(response);
 
             // // Pass the most due relationships to the parent
             // if (setRelationships) {
@@ -61,34 +65,34 @@ const Relationships = forwardRef(({ setRelationships }, ref) => {
     };
 
 
-    useImperativeHandle(ref, () => ({
-        fetchMostDueRelationships,
-    }));
+    // useImperativeHandle(ref, () => ({
+    //     fetchMostDueRelationships,
+    // }));
 
     useEffect(() => {
 
 
         fetchMostDueRelationships();
         fetchAllRelationships()
-    }, [setLocalRelationships]); // Re-fetch if setRelationships changes
+    }, [setRelationships]);
 
     return (
-        <div className="db-sidebar_relationships">
-            <div className="db-sidebar_relationships_box">
-                <div className="db-sidebar_relationships_header">RECOMMENDED CHECK-INS:</div>
-                <div className="db-sidebar_relationships_relations">
+        <div className="relationships">
+            <div className="relationships_box">
+                <h1 className="relationships_header">relationships</h1>
+                <div className="relationships_relations">
                     {relationships.map((relationship) => (
-                        <div key={relationship.id} className="db-sidebar_relationships_relation">
-                            <div className="db-sidebar_relationships_relation_content">
-                                {relationship.name}
-                                <p>
+                        <div key={relationship.id} className="relationships_relation">
+                            <div className="relationships_relation_content">
+                                <p>{relationship.name}</p>
+                                {/* <p>
                                     {relationship.daysLeft > 0
                                         ? `Next call in ${relationship.daysLeft} day(s)`
                                         : `Overdue by ${relationship.overdueDays} day(s)! Call now.`}
-                                </p>
-                                <div className="db-sidebar_relationships_relation_content_progress">
+                                </p> */}
+                                <div className="relationships_relation_content_progress">
                                     <div
-                                        className="db-sidebar_relationships_relation_content_progress-bar"
+                                        className="relationships_relation_content_progress-bar"
                                         style={{
                                             width: `${relationship.progress * 100}%`,
                                             background: relationship.overdue
@@ -99,14 +103,18 @@ const Relationships = forwardRef(({ setRelationships }, ref) => {
                                 </div>
                                 
                             </div>
-                            <button onClick={() => handleCheckIn(relationship.id)}>Checked In</button>
-                                <button onClick={() => handleSkip(relationship.id)}>Skip</button>
+
+                            <div className="relationships_relation_buttons">
+                                <button onClick={() => handleCheckIn(relationship.id)}>CHECK-IN</button>
+                                <button onClick={() => handleSkip(relationship.id)}>SKIP</button>    
+                            </div>
+                            
                         </div>
                     ))}
                 </div>
             </div>
         </div>
     );
-});
+};
 
 export default Relationships;

@@ -1,0 +1,79 @@
+.relationships {
+    /* overflow: none; */
+    text-align: center;
+
+}
+
+.relationships_relations {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    gap: .7rem;
+    /* position: relative; */
+    /* width: 100%; */
+}
+
+.relationships_relation {
+    background-color: black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .5rem 1rem;
+    border-radius: 10px;
+    width: 200%;
+}
+
+
+.relationships_relation_content {
+    display: flex;
+    align-items: center;
+    /* flex-direction: column; */
+    justify-content: center;
+    position: relative;
+    flex: 5;
+    margin: 0 1rem;
+    
+}
+
+.relationships_relation_content p {
+    width: 30%;
+}
+
+.relationships_relation_content_progress {
+    position: relative;
+    width: 100%;
+    height: 5px;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: var(--box);
+    margin: .3rem;
+}
+
+.relationships_relation_content_progress-bar {
+    height: 100%;
+    transition: width 0.3s ease-in-out;
+    border-radius: 5px;
+
+} 
+
+.relationships_relation_buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.relationships_relation_buttons button {
+    background-color: var(--main-accent);
+    font-weight: bold;
+    border-radius: 5px;
+    padding: .2rem .9rem;
+    font-size: 1em;
+    color: white;
+    border: none;
+}
+
+
+.relationships_relation_buttons button:hover {
+    background-color: #9e1e0d;
+
+}
