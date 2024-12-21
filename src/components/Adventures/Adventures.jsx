@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiRequest from '../../utils/apiRequest';
+import './adventures.css'
 
 const Adventures = ({ setAdventure }) => {
     const [mainRecommendation, setMainRecommendation] = useState(null);
@@ -76,8 +77,9 @@ const Adventures = ({ setAdventure }) => {
     };
 
     return (
-        <div>
-            <h3>Today's Adventure Recommendation</h3>
+        <div className='adventures'>
+            <h1>today’s adventure recommendations</h1>
+            <p>Do something everyday!</p>
             {mainRecommendation ? (
                 <div>
                     <h4>{mainRecommendation.title}</h4>
