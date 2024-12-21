@@ -1,9 +1,22 @@
 import './App.css';
+import { ToastContainer } from 'react-toastify';
 import Dashboard from './pages/Dashboard/Dashboard';
 
 function App() {
   return (
-    <Dashboard/>
+    <>
+      <ToastContainer
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+      <Dashboard/>
+    </>
+
   );
 }
 
