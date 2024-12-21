@@ -27,6 +27,10 @@
     gap: .5rem;
 }
 
+.db-info a {
+    color: white;
+}
+
 .db-info h2 {
     font-weight: normal;
     margin: 0;

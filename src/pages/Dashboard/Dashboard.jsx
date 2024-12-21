@@ -106,11 +106,11 @@ useEffect(() => {
     const response = await apiRequest('/relationships/most-due');
     setMostDueRelationships(response)
     } catch (error) {
-        console.error('Error fetching most due relationships:', error);
-      }
+      console.error('Error fetching most due relationships:', error);
+    }
   };
   fetchMostDueRelationships();
-}, []);
+}, [mostDueRelationships]);
 
 // get recommended adventure
 useEffect(() => {
@@ -198,7 +198,10 @@ useEffect(() => {
         <div className="db-main_header">
           <div className="db-info">
             <h2>{currentTime.toLocaleTimeString()}</h2>
-            {weather ? weatherIconMap[weather] || weatherIconMap.Default : <FaCloud />}
+            <a href="https://openweathermap.org" target='_blank'>
+              {weather ? weatherIconMap[weather] || weatherIconMap.Default : <FaCloud />}
+
+            </a>
           </div>
           <div className="db-greeting">
             <h1>{greeting()}, Seyitan.</h1>
@@ -326,38 +329,11 @@ useEffect(() => {
               ))}
 {/* <button onClick={refreshRelationships}>Refresh Relationships</button> */}
 
-
-
             </div>
           </div>
           <div className="db-sidebar-button" onClick={() => openSpecificModal("relationships")}>more relationships</div>
         </div>
         <Modal isOpen={openModal === "relationships"} onClose={closeModal}>
-        {/* {
-          progressData.map((relationship) => (
-            <div key={relationship.id}>
-              <div>
-                {relationship.name}
-                <p>
-                  {relationship.daysLeft > 0
-                    ? `Next call in ${relationship.daysLeft} day(s)`
-                    : 'Overdue! Call now.'}
-                </p>
-                <div className="db-sidebar_relationships_relation_content_progress">
-                  <div
-                    className="db-sidebar_relationships_relation_content_progress-bar"
-                    style={{
-                      width: `${relationship.progress * 100}%`,
-                      background: relationship.overdue ? '#ff6f61' : '#15BAC6', // Red if overdue
-                    }}
-                  />
-                </div>
-                <button>checked in</button>
-                <button>skip</button>
-              </div>
-            </div>
-          ))
-        } */}
           <Relationships setRelationships={setMostDueRelationships}/>
         </Modal>
         <div className="db-sidebar_ideas">
