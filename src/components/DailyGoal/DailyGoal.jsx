@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import apiRequest from '../../utils/apiRequest'; 
+import apiRequest from '../../utils/apiRequest';
+import './daily.css'
 
 const AddGoal = () => {
     const [newGoal, setNewGoal] = useState('');
@@ -19,7 +20,7 @@ const AddGoal = () => {
                 goal: newGoal,
             });
 
-            setMessage(`Goal for ${goalDate} added successfully!`);
+            setMessage(`goal for ${goalDate} added.`);
             setNewGoal('');
             setGoalDate('');
         } catch (error) {
@@ -29,29 +30,34 @@ const AddGoal = () => {
     };
 
     return (
-        <div>
-            <h3>Add a New Goal</h3>
-            <div>
-                <label htmlFor="goal">Goal:</label>
-                <input
-                    type="text"
-                    id="goal"
-                    value={newGoal}
-                    onChange={(e) => setNewGoal(e.target.value)}
-                    placeholder="Enter your goal..."
-                />
+        <div className='daily'>
+            <h2>daily goal</h2>
+            <div className="daily-input">
+                <div>
+                    {/* <label htmlFor="goal">GOAL:</label> */}
+                    <input
+                        type="text"
+                        id="goal"
+                        value={newGoal}
+                        onChange={(e) => setNewGoal(e.target.value)}
+                        placeholder="GOAL"
+                    />
+                </div>
+                <div>
+                    {/* <label htmlFor="date">DATE:</label> */}
+                    <input
+                        type="date"
+                        id="date"
+                        value={goalDate}
+                        onChange={(e) => setGoalDate(e.target.value)}
+                    />
+                </div>
             </div>
-            <div>
-                <label htmlFor="date">Date:</label>
-                <input
-                    type="date"
-                    id="date"
-                    value={goalDate}
-                    onChange={(e) => setGoalDate(e.target.value)}
-                />
-            </div>
-            <button onClick={handleAddGoal}>Add Goal</button>
-            {message && <p>{message}</p>}
+
+            <button onClick={handleAddGoal}>ADD GOAL</button>
+            <h4 className="daily-success">
+                {message && <h1>{message}</h1>}
+            </h4>
         </div>
     );
 };

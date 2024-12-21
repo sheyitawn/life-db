@@ -1,0 +1,41 @@
+.daily  {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.daily label {
+    font-weight: bold;
+}
+
+.daily-input {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+.daily-input input {
+    background-color: #000;
+    border-radius: 10px;
+    border: none;
+    /* padding: .3rem .5rem; */
+    padding: .7rem 1rem;
+    color: white;
+    width: 100%;
+}
+
+.daily button {
+    background-color: var(--main-accent);
+    font-weight: bold;
+    border-radius: 5px;
+    padding: .2rem .9rem;
+    font-size: 1em;
+    color: white;
+    border: none;
+}
