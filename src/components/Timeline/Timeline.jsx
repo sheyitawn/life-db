@@ -62,39 +62,41 @@ const Timeline = () => {
         const today = new Date().toISOString().split("T")[0];
         const now = new Date();
         const currentTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
-    
+
         try {
-            // Log the payload for debugging
-            console.log("🚀 ~ Sending to toggle late day:", { date: today, "late-day": currentTime });
-    
             // Send current date and time to toggle late day
             const response = await apiRequest("/goals/toggle-late-day", "POST", {
                 date: today,
                 "late-day": currentTime,
             });
-    
+
             // Update the late day status
             setIsLateDays(response.goal["late-day"] !== null);
-    
+
             // Fetch the updated timeline
             const updatedTimeline = await apiRequest("/timeline");
             setAdjustedTimeline(updatedTimeline);
-            console.log("🚀 ~ handleLateDays ~ updatedTimeline:", updatedTimeline);
-    
+
         } catch (error) {
             console.error("Error toggling late day:", error);
         }
     };
-    
 
-    const centerIndex = 3; // Center current task in the middle of visible tasks
+    const centerIndex = 3; // Center position for the current task
     const visibleTaskCount = 7; // Number of tasks to display
-    const startIndex = Math.max(currentTaskIndex - centerIndex, 0);
-    const endIndex = Math.min(
-        startIndex + visibleTaskCount,
-        adjustedTimeline.length
-    );
-
+    
+    // Adjust start and end indices dynamically
+    const totalTasks = adjustedTimeline.length;
+    
+    let startIndex = Math.max(currentTaskIndex - centerIndex, 0);
+    let endIndex = Math.min(startIndex + visibleTaskCount, totalTasks);
+    
+    if (endIndex - startIndex < visibleTaskCount) {
+        // Adjust startIndex if there are fewer tasks at the end
+        startIndex = Math.max(endIndex - visibleTaskCount, 0);
+    }
+    
+    // Get the visible tasks
     const visibleTasks = adjustedTimeline.slice(startIndex, endIndex);
 
     const isTaskCompleted = (taskTime) => {
@@ -106,7 +108,7 @@ const Timeline = () => {
     return (
         <>
             <div className="timeline">
-                
+                <div className="timeline-dynamic-line"></div>
 
                 {/* Static Line */}
                 <div className="timeline-static-line"></div>
@@ -134,9 +136,6 @@ const Timeline = () => {
                         </div>
                     </div>
                 ))}
-
-                
-                
             </div>
             {/* Late Days Button */}
             <button className={isLateDays ? "timeline-late-button timeline-button-clicked" : "timeline-late-button"} onClick={handleLateDays}>
