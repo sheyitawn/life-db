@@ -124,7 +124,7 @@ const Timeline = () => {
                             className="task-circle"
                             style={{
                                 backgroundColor: isTaskCompleted(task.time)
-                                    ? "#C62915" // Completed task color
+                                    ? "var(--main-accent)" // Completed task color
                                     : "#ffffff", // Uncompleted task color
                             }}
                         ></div>
