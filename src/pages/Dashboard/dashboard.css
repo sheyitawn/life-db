@@ -3,6 +3,7 @@
     display: flex;
     justify-content: space-between;
     height: 90vh;
+    max-height: 90vh;
 
     
 }
@@ -58,6 +59,8 @@
     margin: 3rem 0;
     gap: 1rem;
     height: 55vh;
+    max-height: 55vh;
+
 }
 
 .db-main_content_timeline {

@@ -23,7 +23,7 @@
     left: -1px;
     /* transform: translate(-50%, -50%); */
     width: 4px;
-    /* height: 14.5rem; */
+    height: 13.4rem;
     background-color: var(--main-accent);
     z-index: 2;
 }
