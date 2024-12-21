@@ -19,12 +19,39 @@
 }
 
 .activities-activity button{
-    background-color: #C62915;
+    background-color: var(--main-accent);
     font-weight: bold;
     border-radius: 5px;
     padding: .2rem .9rem;
     font-size: 1em;
     color: white;
     border: none;
-    
 }
+
+
+
+.activities-add-input {
+    display: flex;
+    gap: .5rem;
+    /* align-items: center; */
+}
+
+.activities-add-input input {
+    background-color: #000;
+    border-radius: 10px;
+    border: none;
+    /* padding: .3rem .5rem; */
+    padding: .7rem 1rem;
+    color: white;
+}
+
+.activities-add-input button {
+    background-color: var(--main-accent);
+    font-weight: bold;
+    border-radius: 10px;
+    padding: .2rem .9rem;
+    font-size: 1em;
+    color: white;
+    border: none;
+}
+

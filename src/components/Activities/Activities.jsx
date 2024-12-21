@@ -93,20 +93,26 @@ const Activities = ({ setActivity }) => {
                 </div>
             ))}
 
-            <h3>Add a New Activity</h3>
-            <input
-                type="text"
-                placeholder="Activity Title"
-                value={newActivity.title}
-                onChange={(e) => setNewActivity({ ...newActivity, title: e.target.value })}
-            />
-            <input
-                type="number"
-                placeholder="Interval in Days"
-                value={newActivity.intervalInDays}
-                onChange={(e) => setNewActivity({ ...newActivity, intervalInDays: e.target.value })}
-            />
-            <button onClick={addActivity}>Add Activity</button>
+            <div className="activities-add">
+                <h3>ADD NEW</h3>
+                <div className="activities-add-input">
+                    <input
+                        type="text"
+                        placeholder="TITLE"
+                        value={newActivity.title}
+                        onChange={(e) => setNewActivity({ ...newActivity, title: e.target.value })}
+                    />
+                    <input
+                        type="number"
+                        placeholder="INTERVAL (DAYS)"
+                        value={newActivity.intervalInDays}
+                        onChange={(e) => setNewActivity({ ...newActivity, intervalInDays: e.target.value })}
+                    />
+                    <button onClick={addActivity}>ADD ACTIVITY</button>
+                </div>
+
+            </div>
+
         </div>
     );
 };
