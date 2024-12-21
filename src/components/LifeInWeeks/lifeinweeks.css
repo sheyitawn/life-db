@@ -22,5 +22,5 @@
     background-color: rgb(0, 0, 0);
 }
 .week-box.filled {
-    background-color: #C62915;
+    background-color: var(--main-accent);
 }
