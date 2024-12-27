@@ -50,7 +50,7 @@ const Adventures = ({ setAdventure }) => {
         }
 
         try {
-            await apiRequest('/add-task', 'POST', newAdventure);
+            await apiRequest('/adventures/add-task', 'POST', newAdventure);
             setNewAdventure({ title: '', intervalInWeeks: '' });
 
             // Refresh recommendations after adding a task
