@@ -27,7 +27,7 @@ const Relationships = () => {
             // Refresh relationships after skip
             const response = await apiRequest('/relationships/relationships');
             setRelationships(response);
-            toast("skipped. try to call next time.")
+            toast("skipped. next call in 2 days.")
         } catch (error) {
             console.error('Error skipping relationship:', error);
         }
