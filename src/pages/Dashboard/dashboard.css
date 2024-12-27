@@ -51,7 +51,13 @@
 .db-greeting h3 {
     /* font-size: 3em; */
     font-weight: normal;
+}
+
+.db-greeting h3 b{
+    /* font-size: 3em; */
+    font-weight: b;
     margin: 0;
+    cursor: pointer;
 }
 
 .db-main_content {
@@ -90,6 +96,7 @@
     font-weight: bold;
     font-size: 2em;
     margin: 0;
+    cursor: pointer;
 }
 
 
