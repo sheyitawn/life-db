@@ -18,6 +18,7 @@ const weatherAPI = process.env.REACT_APP_WEATHER_API;
 const weatherLOC = process.env.REACT_APP_WEATHER_LOC;
 
 const Dashboard = () => {
+  const refreshInterval = 10000;
   const [currentTime, setCurrentTime] = useState(new Date());
   const [weather, setWeather] = useState(null);
   const [hour, setHour] = useState(currentTime.getHours());
@@ -98,7 +99,7 @@ const Dashboard = () => {
     };
     fetchActivities();
 
-    const interval = setInterval(fetchActivities, 5000); // Update every 5 seconds
+    const interval = setInterval(fetchActivities, refreshInterval); // Update every 5 seconds
     return () => clearInterval(interval);
 }, []);
 
@@ -114,7 +115,7 @@ useEffect(() => {
   };
   fetchMostDueRelationships();
 
-  const interval = setInterval(fetchMostDueRelationships, 5000); // Update every 5 seconds
+  const interval = setInterval(fetchMostDueRelationships, refreshInterval); // Update every 5 seconds
   return () => clearInterval(interval);
 
 
@@ -138,7 +139,7 @@ useEffect(() => {
   };
   fetchRecommendations();
 
-  const interval = setInterval(fetchRecommendations, 5000); // Update every 5 seconds
+  const interval = setInterval(fetchRecommendations, refreshInterval); // Update every 5 seconds
   return () => clearInterval(interval);
 }, []);
 
@@ -168,7 +169,7 @@ useEffect(() => {
 
       fetchGoal();
 
-      const interval = setInterval(fetchGoal, 5000); // Update every 5 seconds
+      const interval = setInterval(fetchGoal, refreshInterval); // Update every 5 seconds
       return () => clearInterval(interval);
   }, []);
 
@@ -193,7 +194,7 @@ useEffect(() => {
 
     fetchWeather();
 
-    const interval = setInterval(fetchWeather, 5000); // Update every 5 seconds
+    const interval = setInterval(fetchWeather, refreshInterval); // Update every 5 seconds
     return () => clearInterval(interval);
   }, []);
 
