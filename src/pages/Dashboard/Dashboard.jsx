@@ -97,6 +97,9 @@ const Dashboard = () => {
         }
     };
     fetchActivities();
+
+    const interval = setInterval(fetchActivities, 5000); // Update every 5 seconds
+    return () => clearInterval(interval);
 }, []);
 
 // get most due relationships
@@ -110,7 +113,12 @@ useEffect(() => {
     }
   };
   fetchMostDueRelationships();
-}, [mostDueRelationships]);
+
+  const interval = setInterval(fetchMostDueRelationships, 5000); // Update every 5 seconds
+  return () => clearInterval(interval);
+
+
+}, []);
 
 // get recommended adventure
 useEffect(() => {
@@ -129,6 +137,9 @@ useEffect(() => {
       }
   };
   fetchRecommendations();
+
+  const interval = setInterval(fetchRecommendations, 5000); // Update every 5 seconds
+  return () => clearInterval(interval);
 }, []);
 
   // Update the time every second
@@ -156,7 +167,10 @@ useEffect(() => {
       };
 
       fetchGoal();
-  }, [currentTime]); // Re-fetch when currentTime changes
+
+      const interval = setInterval(fetchGoal, 5000); // Update every 5 seconds
+      return () => clearInterval(interval);
+  }, []);
 
   
 // Fetch weather data
@@ -178,17 +192,11 @@ useEffect(() => {
     };
 
     fetchWeather();
+
+    const interval = setInterval(fetchWeather, 5000); // Update every 5 seconds
+    return () => clearInterval(interval);
   }, []);
 
-
-  // useEffect(() => {
-  //   const refreshRelationships = () => {
-  //     if (relationshipsRef.current && relationshipsRef.current.fetchMostDueRelationships) {
-  //         relationshipsRef.current.fetchMostDueRelationships();
-  //     }
-  // };;
-//   refreshRelationships()
-// }, []);
 
  
 
