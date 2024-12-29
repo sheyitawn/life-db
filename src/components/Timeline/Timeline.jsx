@@ -108,7 +108,7 @@ const Timeline = () => {
     return (
         <>
             <div className="timeline">
-                <div className="timeline-dynamic-line"></div>
+                {/* <div className="timeline-dynamic-line"></div> */}
 
                 {/* Static Line */}
                 <div className="timeline-static-line"></div>
