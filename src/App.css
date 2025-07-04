@@ -3,8 +3,56 @@ body {
   color: white;
 
   /* colour variables */
-    --box: #0b0b0b;
-    --gray-text: #262626;
+    --box: rgb(29, 30, 32);
+    --box-light: rgb(70, 82, 105);
+    --gray-text: #5f5654;
     --main-accent: #C62915;
+    --main-accent-dark: #7c1a0d;
     --toastify-color-progress-dark: var(--main-accent);
+    overflow: hidden;
+
+
+    
+}
+
+.video-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  opacity: 0.4; /* Adjust to control brightness */
+}
+
+.background {
+  /* background-image: url('/public/background.jpeg'); */
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+button {
+  background-color: var(--main-accent); 
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.4rem;
+  font-size: 0.95rem;
+  border-radius: 999px; /* pill shape */
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: lighter;
+  transition: background 0.2s ease;
+  margin: .5rem;
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+}
+
+button:hover {
+  background-color: var(--main-accent-dark); 
 }

@@ -1,0 +1,105 @@
+.daily-card {
+    padding: 1rem;
+}
+
+
+.daily-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.daily-header h4 {
+  margin: 0;
+  /* font-weight: bold; */
+  font-size: 15px;
+}
+
+.daily-header-icons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.daily-progress-circle {
+  --value: 0; /* This will be updated dynamically via inline style */
+  --size: 32px;
+  --thickness: 4px;
+
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background:
+    conic-gradient(var(--main-accent, #000) calc(var(--value) * 1%), #eee 0),
+    radial-gradient(white 60%, transparent 61%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: bold;
+  color: #ffffff;
+transition: background 1s ease-in-out;
+}
+
+.daily-progress-circle_center {
+    background-color: var(--box);
+
+
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.daily-edit {
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  transition: ease 0.2s;
+}
+
+.daily-edit:hover {
+  background: none;
+    color: var(--main-accent);
+}
+
+.daily-goals {
+  list-style: none;
+  padding: 0;
+  /* margin-top: 30px; */
+}
+
+.goal-item {
+  display: flex;
+  align-items: center;
+  margin-top: .6rem;
+  font-size: 1.3em;
+}
+
+.goal-item input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #999;
+  border-radius: 4px;
+  margin-right: 10px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.goal-item input[type="checkbox"]:checked {
+  background-color: rgb(255, 255, 255);
+  border-color: rgb(255, 255, 255);
+}
+
+.goal-item input[type="checkbox"]:checked::after {
+  content: '✔';
+  color: #000;
+  font-size: 14px;
+  position: absolute;
+  top: -2px;
+  left: 2px;
+}

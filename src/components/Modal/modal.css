@@ -4,11 +4,11 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.93);
+    background: rgba(0, 0, 0, 0.932);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 99999999;
 }
 
 .modal-content {
@@ -20,8 +20,9 @@
     max-width: 700px;
     position: relative;
     color: white;
-    z-index: 1001;
-    border: 2px solid ;
+    z-index: 99999999;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     /* align-items: center; */
     justify-content: center;

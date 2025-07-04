@@ -1,0 +1,127 @@
+
+
+/* Main heading */
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: #ccc;
+}
+
+/* Subtle text like "Loading..." or "Nothing scheduled" */
+.card-subtle {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+/* Event list styles */
+.event-list {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* Each event as a pill-style box */
+.event-item {
+  flex: 1 1 calc(50% - 1rem);
+  /* background:  rgb(255, 2, 2); */
+  border: 1px solid rgba(255, 255, 255, 0.336);
+
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* border: 1px solid rgba(255, 255, 255, 0.1); */
+  min-width: 150px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Time underneath the summary */
+.event-time {
+  margin-top: 0.2rem;
+  font-size: 0.8rem;
+  color: #d3b2a8;
+}
+.event-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.event-item {
+  background: var(--main-box);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.95rem;
+  font-weight: 500;
+  position: relative;
+  flex: 1 1 calc(50% - 1rem);
+  min-width: 150px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  z-index: 1;
+}
+
+
+
+/* Hash lines for past events */
+.past-event::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 200%;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.05) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  pointer-events: none;
+  z-index: 3;
+}
+
+
+/* Orange border for current event */
+.current-event {
+  background-color: var(--main-accent);
+  /* border: 1px solid rgba(255, 0, 0, 0.904); */
+  z-index: 2;
+}
+
+/* Hash lines for past events */
+.past-event::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 200%;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.05) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  pointer-events: none;
+  z-index: 3;
+}
+.event-time.subtle {
+  font-size: 0.8rem;
+  color: #aaa;
+  font-style: italic;
+}

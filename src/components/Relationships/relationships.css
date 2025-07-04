@@ -47,6 +47,8 @@
     border-radius: 5px;
     overflow: hidden;
     background-color: var(--box);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
     margin: .3rem;
 }
 

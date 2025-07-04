@@ -1,6 +1,8 @@
 import './App.css';
 import { ToastContainer } from 'react-toastify';
 import Dashboard from './pages/Dashboard/Dashboard';
+import backgroundVideo from './assets/background.mp4';
+
 
 function App() {
   return (
@@ -14,7 +16,17 @@ function App() {
         pauseOnHover
         theme="dark"
       />
-      <Dashboard/>
+
+      <video src={backgroundVideo} className="video-bg"
+        autoPlay
+        loop
+        muted
+        playsInline>
+     </video>
+      <div className='background'>
+
+        <Dashboard />
+      </div>
     </>
 
   );

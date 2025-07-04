@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './dashboard.css';
 import { FaRegSnowflake, FaSun, FaCloudRain, FaCloud, FaWind } from "react-icons/fa";
-import { MdLightbulb, MdInfoOutline } from 'react-icons/md';
+import { MdLightbulb, MdInfoOutline, MdAdd } from 'react-icons/md';
 import Timeline from '../../components/Timeline/Timeline';
 import Phases from '../../components/Phases/Phases'
 import MTest from '../../components/MTest'
@@ -13,6 +13,10 @@ import DailyGoal from '../../components/DailyGoal/DailyGoal'
 import Activities from '../../components/Activities/Activities';
 import Relationships from '../../components/Relationships/Relationships';
 import apiRequest from '../../utils/apiRequest';
+import Calendar from '../../components/Calendar/Calendar';
+import Daily from '../../components/Daily/Daily';
+import WeeklyProgress from '../../components/WeeklyProgress/WeeklyProgress';
+import Clock from '../../components/Clock/Clock';
 
 const weatherAPI = process.env.REACT_APP_WEATHER_API;
 const weatherLOC = process.env.REACT_APP_WEATHER_LOC;
@@ -143,15 +147,15 @@ useEffect(() => {
   return () => clearInterval(interval);
 }, []);
 
-  // Update the time every second
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
+  // // Update the time every second
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     setCurrentTime(new Date());
+  //   }, 1000);
 
-    // Cleanup the timer on component unmount
-    return () => clearInterval(timer);
-  }, []);
+  //   // Cleanup the timer on component unmount
+  //   return () => clearInterval(timer);
+  // }, []);
 
   // Fetch daily goal
   useEffect(() => {
@@ -179,7 +183,11 @@ useEffect(() => {
     const fetchWeather = async () => {
       const apiKey = weatherAPI;
       const city = weatherLOC;
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+      if (!apiKey || !city) {
+      console.error("❌ Missing weather API key or city. ");
+      return;
+    }
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`;
 
       console.log("🚀 ~ fetchWeather ~ url:", url)
       try {
@@ -202,160 +210,185 @@ useEffect(() => {
  
 
   return (
-    <div className="dashboard">
-      <div className="db-main">
-        <div className="db-main_header">
-          <div className="db-info">
-            <h2>{currentTime.toLocaleTimeString()}</h2>
-            <a href="https://openweathermap.org" target='_blank'>
-              {weather ? weatherIconMap[weather] || weatherIconMap.Default : <FaCloud />}
+    <div className="dashboard-border">
+      <div className="dashboard">
+        <div className="db-main">
+          <div className="db-main_header">
+            <div className="db-info">
+              <h2 className='digital-clock'><Clock /></h2>
+              <a href="https://openweathermap.org" target='_blank'>
+                {weather ? weatherIconMap[weather] || weatherIconMap.Default : <FaCloud />}
 
-            </a>
+              </a>
+            </div>
+            <div className="db-greeting">
+              <h1>{greeting()}, Seyitan.</h1>
+              <h3>
+                Today is <b onClick={() => openSpecificModal("lifeinweeks")}>{formattedDate}. </b> 
+                {
+                  
+                  hour < 12 ? <>It’s time to start your day.</>: hour < 18 ? <>Adventure awaits!</>: <>Time to wind down.</>
+                }
+              </h3>
+            </div>
           </div>
-          <div className="db-greeting">
-            <h1>{greeting()}, Seyitan.</h1>
-            <h3>
-              Today is <b onClick={() => openSpecificModal("lifeinweeks")}>{formattedDate}. </b> 
-              {
+          <Modal isOpen={openModal === "lifeinweeks"} onClose={closeModal}>
+            <LifeInWeeks dateOfBirth="2003-03-22" />
+          </Modal>
+          <div className="db-main_content">
+            <div className="db-main_content_timeline">
+              {/* <Timeline /> */}
+            <Calendar />
+            </div>
+            <div className="db-main_content_daily">
+              <div>
+                <h4>DAILY PROJECT GOAL</h4>
+                  <div onClick={() => openSpecificModal("daily")}>
+                    {
+                      dailyGoal ? (
+                        <p>{dailyGoal.goal}</p>
+                      ) : (
+                        <button> <MdAdd /> Set Goal</button>
+                      )
+                    }
+                  </div>
+
+                  <Modal isOpen={openModal === "daily"} onClose={closeModal}>
+                    <DailyGoal />
+                  </Modal>
+              </div>
+              {/* adventure */}
+              <div>
+                <h4>ADVENTURE</h4>
                 
-                hour < 12 ? <>It’s time to start your day.</>: hour < 18 ? <>Adventure awaits!</>: <>Time to wind down.</>
-              }
-            </h3>
-          </div>
-        </div>
-        <Modal isOpen={openModal === "lifeinweeks"} onClose={closeModal}>
-          <LifeInWeeks dateOfBirth="2003-03-22" />
-        </Modal>
-        <div className="db-main_content">
-          <div className="db-main_content_timeline">
-            <Timeline />
-          </div>
-          <div className="db-main_content_daily">
-            <div>
-              <h4>DAILY PROJECT GOAL</h4>
-                <div onClick={() => openSpecificModal("daily")}>
-                  {
-                    dailyGoal ? (
-                      <p>{dailyGoal.goal}</p>
-                    ) : (
-                      <p>No goal set for today.</p>
-                    )
-                  }
+                {mainAdventure && (<p>{mainAdventure.title}</p>)}
+
+                <div onClick={() => openSpecificModal("adventures")}>see adventures</div>
+                <Modal isOpen={openModal === "adventures"} onClose={closeModal}>
+                  <Adventures setAdventure={setMainAdventure} />
+                </Modal>
+              </div>
+
+              {/* weekly */}
+                  <h4>WEEKLY PROGRESS</h4>
+
+              <div className="db-main_flex">
+                <div>
+                  <WeeklyProgress />
                 </div>
 
-                <Modal isOpen={openModal === "daily"} onClose={closeModal}>
-                  <DailyGoal />
-                </Modal>
-            </div>
-            <div>
-              <h4>DAILY ADVENTURE</h4>
-              
-              {mainAdventure && (<p>{mainAdventure.title}</p>)}
 
-              <div onClick={() => openSpecificModal("adventures")}>see adventures</div>
-              <Modal isOpen={openModal === "adventures"} onClose={closeModal}>
-                <Adventures setAdventure={setMainAdventure} />
-              </Modal>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="db-sidebar">
-        <div className="db-sidebar_phases">
-          <Phases />
-          
+                {/* ideas */}
 
-          <div className="db-sidebar-button" onClick={() => openSpecificModal("phases")}>open cycle</div>
-          {/* Modal 1 */}
-          <Modal isOpen={openModal === "phases"} onClose={closeModal}>
-            <h1>phases</h1>
-            You shoukd feel (feeling during phase), however, dont let this define you! This is just a reminder that it is normal to feel like this during this time. Utilize this knowledge and change your perspective!
-            <MTest />
-          </Modal>
-
-
-
-
-
-          {/* Modal 3 */}
-          <Modal isOpen={openModal === "ideas"} onClose={closeModal}>
-            <h1>ideas</h1>
-            <p>This is the content for Modal 3.</p>
-          </Modal>
-        </div>
-        <div className="db-sidebar_fast">
-          You should aim for a 20 hour fast today.
-          <MdInfoOutline onClick={() => openSpecificModal("fasting")}/>
-            {/* Modal 3 */}
-          <Modal isOpen={openModal === "fasting"} onClose={closeModal}>
-            <h1>fasting</h1>
-            <p>Since you are in the Follicular phase, it is recommended you fast for 20-24 hours.</p>
-          </Modal>
-        </div>
-        <div className="db-sidebar_activity">
-          <div className="db-sidebar_activity_box">
-            <div className="db-sidebar_activity_header">RECOMMENDED ACTIVITY:</div>
-            <div className="db-sidebar_activity_content">
-              {mainActivity && (
-                <p>{mainActivity.title}</p>
-              )}
-            </div>
-          </div>
-          <div className="db-sidebar-button" onClick={() => openSpecificModal("activities")}>more activities</div>
-        </div>
-
-        <Modal isOpen={openModal === "activities"} onClose={closeModal}>
-            {/* <h1>activities</h1> */}
-
-            <Activities setActivity={setMainActivity} />
-          </Modal>
-
-        <div className="db-sidebar_relationships">
-          <div className="db-sidebar_relationships_box">
-            <div className="db-sidebar_relationships_header">RECOMMENDED CHECK-INS:</div>
-            <div className="db-sidebar_relationships_relations">
-              {mostDueRelationships.map((relationship) => (
-                <div key={relationship.id} className="db-sidebar_relationships_relation">
-                  <div className="db-sidebar_relationships_relation_content">
-                    {relationship.name}
-                    {/* <p>
-                      {relationship.daysLeft > 0
-                        ? `Next call in ${relationship.daysLeft} day(s)`
-                        : 'Overdue! Call now.'}
-                    </p> */}
-                    <div className="db-sidebar_relationships_relation_content_progress">
-                      <div
-                        className="db-sidebar_relationships_relation_content_progress-bar"
-                        style={{
-                          width: `${relationship.progress * 100}%`,
-                          background: relationship.overdue ? '#ff6f61' : '#15BAC6', // Red if overdue
-                        }}
-                      />
+                <div className="db-sidebar_ideas" onClick={() => openSpecificModal("ideas")}>
+                  <div className="db-sidebar_ideas_box">
+                    <h2>
+                      <MdLightbulb />
+                    </h2>
+                    <p>idea of the day:</p>
+                    <div className="db-sidebar_ideas_box_content">
+                      GEOCACHING FOR RESTAURANTS
                     </div>
                   </div>
-                  <MdInfoOutline />
+                  {/* <div className="db-sidebar-button" onClick={() => openSpecificModal("ideas")}>more ideas</div> */}
                 </div>
-              ))}
-{/* <button onClick={refreshRelationships}>Refresh Relationships</button> */}
+              </div>
 
             </div>
           </div>
-          <div className="db-sidebar-button" onClick={() => openSpecificModal("relationships")}>more relationships</div>
         </div>
-        <Modal isOpen={openModal === "relationships"} onClose={closeModal}>
-          <Relationships setRelationships={setMostDueRelationships}/>
-        </Modal>
-        <div className="db-sidebar_ideas">
-          <div className="db-sidebar_ideas_box">
-            <h2>
-              <MdLightbulb />
-            </h2>
-            <p>idea of the day:</p>
-            <div className="db-sidebar_ideas_box_content">
-              GEOCACHING FOR RESTAURANTS
+        <div className="db-sidebar">
+          <div className="db-sidebar_phases">
+            <Phases />
+            
+
+            <div className="db-sidebar-button" onClick={() => openSpecificModal("phases")}>open cycle</div>
+            {/* Modal 1 */}
+            <Modal isOpen={openModal === "phases"} onClose={closeModal}>
+              <h1>phases</h1>
+              You shoukd feel (feeling during phase), however, dont let this define you! This is just a reminder that it is normal to feel like this during this time. Utilize this knowledge and change your perspective!
+              <MTest />
+            </Modal>
+
+
+
+
+
+            {/* Modal 3 */}
+            <Modal isOpen={openModal === "ideas"} onClose={closeModal}>
+              <h1>ideas</h1>
+              <p>This is the content for Modal 3.</p>
+            </Modal>
+          </div>
+          <div className="db-sidebar_fast">
+            You should aim for a 20 hour fast today.
+            <MdInfoOutline onClick={() => openSpecificModal("fasting")}/>
+              {/* Modal 3 */}
+            <Modal isOpen={openModal === "fasting"} onClose={closeModal}>
+              <h1>fasting</h1>
+              <p>Since you are in the Follicular phase, it is recommended you fast for 20-24 hours.</p>
+            </Modal>
+          </div>
+          <div className="db-sidebar_activity">
+            <div className="db-sidebar_activity_box">
+              <div className="db-sidebar_activity_header">RECOMMENDED ACTIVITY:</div>
+              <div className="db-sidebar_activity_content">
+                {mainActivity && (
+                  <p>{mainActivity.title}</p>
+                )}
+              </div>
+            </div>
+            <div className="db-sidebar-button" onClick={() => openSpecificModal("activities")}>more activities</div>
+          </div>
+
+          <Modal isOpen={openModal === "activities"} onClose={closeModal}>
+              <h1>activities</h1>
+
+              <Activities setActivity={setMainActivity} />
+            </Modal>
+          <div className="db-sidebar_daily">
+            {/* <div className="db-sidebar_daily_header">DAILY</div> */}
+
+            <div className="db-sidebar_daily_box">
+              <Daily />
             </div>
           </div>
-          <div className="db-sidebar-button" onClick={() => openSpecificModal("ideas")}>more ideas</div>
+          <div className="db-sidebar_relationships">
+            <div className="db-sidebar_relationships_box">
+              <div className="db-sidebar_relationships_header">RECOMMENDED CHECK-INS:</div>
+              <div className="db-sidebar_relationships_relations">
+                {mostDueRelationships.map((relationship) => (
+                  <div key={relationship.id} className="db-sidebar_relationships_relation">
+                    <div className="db-sidebar_relationships_relation_content">
+                      {relationship.name}
+                      {/* <p>
+                        {relationship.daysLeft > 0
+                          ? `Next call in ${relationship.daysLeft} day(s)`
+                          : 'Overdue! Call now.'}
+                      </p> */}
+                      <div className="db-sidebar_relationships_relation_content_progress">
+                        <div
+                          className="db-sidebar_relationships_relation_content_progress-bar"
+                          style={{
+                            width: `${relationship.progress * 100}%`,
+                            background: relationship.overdue ? '#C62915' : '#15BAC6', // Red if overdue
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <MdInfoOutline />
+                  </div>
+                ))}
+  {/* <button onClick={refreshRelationships}>Refresh Relationships</button> */}
+
+              </div>
+            </div>
+            <div className="db-sidebar-button" onClick={() => openSpecificModal("relationships")}>more relationships</div>
+          </div>
+          <Modal isOpen={openModal === "relationships"} onClose={closeModal}>
+            <Relationships setRelationships={setMostDueRelationships}/>
+          </Modal>
+          
         </div>
       </div>
     </div>

@@ -1,0 +1,47 @@
+.weekly-card {
+  background: var(--box);
+  border-radius: 15px;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: .6em;
+}
+
+.weekly-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.legend {
+  font-size: 0.4em;
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.legend .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.dot.water {
+  background: #2989f7;
+}
+
+.dot.walk {
+  background: #01da30;
+}
+
+.dot.fridge {
+  background: #b14101;
+}
+
+.today-label {
+  font-weight: bold;
+  fill: var(--main-accent, #000);
+}

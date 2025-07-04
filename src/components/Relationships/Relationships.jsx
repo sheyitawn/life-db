@@ -96,7 +96,7 @@ const Relationships = () => {
                                         style={{
                                             width: `${relationship.progress * 100}%`,
                                             background: relationship.overdue
-                                                ? '#ff6f61'
+                                                ? '#C62915'
                                                 : '#15BAC6',
                                         }}
                                     />
