@@ -1,0 +1,59 @@
+.manager-container {
+  padding: 1rem;
+  border-radius: 12px;
+  max-width: 500px;
+  margin: auto;
+  font-family: sans-serif;
+}
+
+.section {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.done-button {
+  padding: 0.4rem 0.8rem;
+  margin-left: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+.done-button.completed {
+  background-color: #9e9e9e;
+  cursor: not-allowed;
+}
+
+.refresh-button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
+.reset-button {
+  margin-top: 1rem;
+  padding: 0.4rem 1rem;
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.exercise-list {
+  list-style: none;
+  padding: 0;
+}
+
+.exercise-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem 0;
+}

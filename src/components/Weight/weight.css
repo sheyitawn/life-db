@@ -1,0 +1,32 @@
+.weight {
+  border-radius: 10px;
+  /* padding: 1rem; */
+  max-width: 400px;
+  margin: auto;
+}
+
+.weight h3 {
+  margin-bottom: 0.5rem;
+}
+
+.weight input {
+  padding: 0.5rem;
+  width: 70%;
+  margin-right: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.weight button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.weight .message {
+  margin-top: 0.5rem;
+  color: #555;
+}

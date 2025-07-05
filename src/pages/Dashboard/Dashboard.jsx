@@ -17,6 +17,10 @@ import Calendar from '../../components/Calendar/Calendar';
 import Daily from '../../components/Daily/Daily';
 import WeeklyProgress from '../../components/WeeklyProgress/WeeklyProgress';
 import Clock from '../../components/Clock/Clock';
+import Birthday from '../../components/Birthday/Birthday';
+import ActivityManager from '../../components/ActivityManager/ActivityManager';
+import Weight from '../../components/Weight/Weight';
+import WeightChart from '../../components/WeightChart/WeightChart';
 
 const weatherAPI = process.env.REACT_APP_WEATHER_API;
 const weatherLOC = process.env.REACT_APP_WEATHER_LOC;
@@ -258,7 +262,7 @@ useEffect(() => {
                   </Modal>
               </div>
               {/* adventure */}
-              <div>
+              {/* <div>
                 <h4>ADVENTURE</h4>
                 
                 {mainAdventure && (<p>{mainAdventure.title}</p>)}
@@ -267,10 +271,15 @@ useEffect(() => {
                 <Modal isOpen={openModal === "adventures"} onClose={closeModal}>
                   <Adventures setAdventure={setMainAdventure} />
                 </Modal>
-              </div>
+              </div> */}
+
+              <Birthday />
+
+              <Weight />
+              <WeightChart />
 
               {/* weekly */}
-                  <h4>WEEKLY PROGRESS</h4>
+              <h4>WEEKLY PROGRESS</h4>
 
               <div className="db-main_flex">
                 <div>
@@ -332,11 +341,12 @@ useEffect(() => {
           <div className="db-sidebar_activity">
             <div className="db-sidebar_activity_box">
               <div className="db-sidebar_activity_header">RECOMMENDED ACTIVITY:</div>
-              <div className="db-sidebar_activity_content">
+              <Activities />
+              {/* <div className="db-sidebar_activity_content">
                 {mainActivity && (
                   <p>{mainActivity.title}</p>
                 )}
-              </div>
+              </div> */}
             </div>
             <div className="db-sidebar-button" onClick={() => openSpecificModal("activities")}>more activities</div>
           </div>
@@ -344,7 +354,7 @@ useEffect(() => {
           <Modal isOpen={openModal === "activities"} onClose={closeModal}>
               <h1>activities</h1>
 
-              <Activities setActivity={setMainActivity} />
+              <ActivityManager />
             </Modal>
           <div className="db-sidebar_daily">
             {/* <div className="db-sidebar_daily_header">DAILY</div> */}
