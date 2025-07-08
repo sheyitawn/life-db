@@ -1,0 +1,21 @@
+.fast-view,
+.fast-detail {
+  border: 1px solid #ccc;
+  padding: 1em;
+  margin: 1em;
+  border-radius: 8px;
+}
+
+.fast-view button {
+  margin-top: 0.5em;
+  padding: 0.5em 1em;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.fast-view button:hover {
+  background-color: #388e3c;
+}

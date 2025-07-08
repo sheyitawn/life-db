@@ -13,7 +13,7 @@ function Daily() {
     const fetchHabits = async () => {
       try {
         const data = await apiRequest('/habits');
-        setHabits(data.habits);
+        setHabits(data.habits); // ✅ FIX: data.habits already contains the habit object
         setLoading(false);
       } catch (error) {
         console.error('Failed to load habits:', error);
@@ -25,7 +25,10 @@ function Daily() {
   }, []);
 
   const completedCount = Object.values(habits).filter(Boolean).length;
-  const progress = Math.round((completedCount / Object.keys(habits).length) * 100);
+  const habitKeys = Object.keys(habits);
+  const progress = habitKeys.length
+    ? Math.round((completedCount / habitKeys.length) * 100)
+    : 0;
 
   const toggleHabit = async (habitKey) => {
     try {
@@ -33,7 +36,7 @@ function Daily() {
         date: today,
         habitKey,
       });
-      setHabits(response.habits.habits);
+      setHabits(response.habits); // ✅ FIX: no double `.habits.habits`
     } catch (error) {
       console.error('Failed to toggle habit:', error);
     }
@@ -44,15 +47,14 @@ function Daily() {
       <div className="daily-header">
         <h4>daily</h4>
         <div className="daily-header-icons">
-                <div
-        className="daily-progress-circle"
-        style={{ '--value': progress }}
-        >
-        <div className="daily-progress-circle_center">
-            <span>{progress}%</span>
-        </div>
-        
-        </div>
+          <div
+            className="daily-progress-circle"
+            style={{ '--value': progress }}
+          >
+            <div className="daily-progress-circle_center">
+              <span>{progress}%</span>
+            </div>
+          </div>
 
           {/* <button className="daily-edit">
             <FaPen size={12} />

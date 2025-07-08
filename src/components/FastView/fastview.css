@@ -1,0 +1,51 @@
+.fastview {
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px solid #2196f3;
+  max-width: 400px;
+  margin: 20px auto;
+  font-family: sans-serif;
+}
+
+.fastview h3 {
+  text-align: center;
+  color: #333;
+}
+
+.fastview-form label,
+.fastview-info p {
+  display: block;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.fastview-form select,
+.fastview-form input {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  margin-top: 4px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.start-btn,
+.stop-btn {
+  margin-top: 15px;
+  width: 100%;
+  padding: 10px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.start-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.stop-btn {
+  background-color: #f44336;
+  color: white;
+}

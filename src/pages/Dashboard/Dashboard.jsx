@@ -21,6 +21,10 @@ import Birthday from '../../components/Birthday/Birthday';
 import ActivityManager from '../../components/ActivityManager/ActivityManager';
 import Weight from '../../components/Weight/Weight';
 import WeightChart from '../../components/WeightChart/WeightChart';
+import HabitTracker from '../../components/HabitTracker/HabitTracker';
+import HabitView from '../../components/HabitView/HabitView';
+import Fast from '../../components/Fast/Fast';
+import FastView from '../../components/FastView/FastView';
 
 const weatherAPI = process.env.REACT_APP_WEATHER_API;
 const weatherLOC = process.env.REACT_APP_WEATHER_LOC;
@@ -274,10 +278,12 @@ useEffect(() => {
               </div> */}
 
               <Birthday />
-
+              <HabitTracker />
+              <HabitView />
               <Weight />
               <WeightChart />
-
+              <Fast />
+              <FastView />
               {/* weekly */}
               <h4>WEEKLY PROGRESS</h4>
 

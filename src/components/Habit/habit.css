@@ -1,0 +1,51 @@
+.habit-card {
+  background: #1c1c1e;
+  color: white;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.habit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.habit-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.habit-subtitle {
+  font-size: 0.9rem;
+  color: #f59e0b;
+  margin: 0.5rem 0;
+}
+
+.habit-days {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.habit-day {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.completed {
+  background-color: #10b981;
+  color: black;
+}
+
+.missed {
+  background-color: #f59e0b;
+  color: black;
+}

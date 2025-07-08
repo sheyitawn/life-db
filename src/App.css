@@ -9,7 +9,7 @@ body {
     --main-accent: #C62915;
     --main-accent-dark: #7c1a0d;
     --toastify-color-progress-dark: var(--main-accent);
-    overflow: hidden;
+    /* overflow: hidden; */
 
 
     
