@@ -4,34 +4,43 @@ import './calendar.css';
 function Calendar() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false); // New error state
+  const [error, setError] = useState(false);
+  const [reauthNeeded, setReauthNeeded] = useState(false); // NEW
 
-  const fetchEvents = () => {
+  const fetchEvents = async () => {
     setLoading(true);
-    setError(false); // Reset error on new fetch
-    fetch('http://localhost:3001/calendar/today')
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setEvents(data);
-        } else {
-          console.error('Invalid event data format:', data);
-          setEvents([]);
-          setError(true);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Failed to load events :( :', err);
+    setError(false);
+    setReauthNeeded(false);
+
+    try {
+      const res = await fetch('http://localhost:3001/calendar/today');
+      const data = await res.json();
+
+      if (res.status === 401 && data.error === 'expired_token') {
+        setReauthNeeded(true);
+        setEvents([]);
+        return;
+      }
+
+      if (!Array.isArray(data)) {
+        console.error('Invalid event data format:', data);
         setEvents([]);
         setError(true);
-        setLoading(false);
-      });
+      } else {
+        setEvents(data);
+      }
+    } catch (err) {
+      console.error('Failed to load events:', err);
+      setEvents([]);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchEvents();
-    const interval = setInterval(fetchEvents, 30 * 60 * 1000); // every 30 minutes
+    const interval = setInterval(fetchEvents, 30 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -47,6 +56,16 @@ function Calendar() {
     <div className="calendar glass-card">
       {loading ? (
         <p className="card-subtle">Loading events...</p>
+      ) : reauthNeeded ? (
+        <div>
+          <p className="card-subtle">Your Google Calendar session expired.</p>
+          <a href="http://localhost:3001/calendar/login"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <button className="google-reconnect-button">Reconnect to Google</button>
+          </a>
+        </div>
       ) : error ? (
         <p className="card-subtle">Could not get calendar</p>
       ) : events.length === 0 ? (
