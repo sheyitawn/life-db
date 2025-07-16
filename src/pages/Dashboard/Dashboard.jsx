@@ -34,7 +34,7 @@ const Dashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [weather, setWeather] = useState(null);
   const [hour, setHour] = useState(currentTime.getHours());
-
+  const [temperature, setTemperature] = useState(null); 
   const [openModal, setOpenModal] = useState(null); // Track which modal is open
   const [mainAdventure, setMainAdventure] = useState(null);
   const [mainActivity, setMainActivity] = useState(null);
@@ -201,10 +201,13 @@ useEffect(() => {
       try {
         const response = await axios.get(url);
         const weatherCondition = response.data.weather[0].main;
+        const temp = response.data.main.temp;
         setWeather(weatherCondition);
+        setTemperature(temp);
       } catch (error) {
         console.error("Error fetching weather data:", error);
         setWeather("Default");
+        setTemperature(null);
       }
     };
 
@@ -224,10 +227,13 @@ useEffect(() => {
           <div className="db-main_header">
             <div className="db-info">
               <h2 className='digital-clock'><Clock /></h2>
-              <a href="https://openweathermap.org" target='_blank'>
+              <a href="https://openweathermap.org" target="_blank" rel="noopener noreferrer" className="weather-container">
                 {weather ? weatherIconMap[weather] || weatherIconMap.Default : <FaCloud />}
-
+                {temperature !== null && (
+                  <span className="weather-temp">{Math.round(temperature)}°C</span>
+                )}
               </a>
+
             </div>
             <div className="db-greeting">
               <h1>{greeting()}, Seyitan.</h1>
