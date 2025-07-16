@@ -10,11 +10,14 @@ const Relationships = () => {
     // Handle check-in action
     const handleCheckIn = async (id) => {
         try {
-            await apiRequest(`/relationships/relationships/${id}`, 'POST', { action: 'checked-in' });
+            await apiRequest(`/relationships/relationships/${id}`, 'POST', { action: 'check-in' });
             // Refresh relationships after check-in
             const response = await apiRequest('/relationships/relationships');
             setRelationships(response);
-            toast("checked in")
+            
+            toast(`Checked in with ${relationships[id]}`)
+            console.log("🚀 ~ handleCheckIn ~ relationships:", relationships[id])
+
         } catch (error) {
             console.error('Error updating relationship:', error);
         }
