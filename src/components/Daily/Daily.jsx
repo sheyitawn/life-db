@@ -5,6 +5,7 @@ import apiRequest from '../../utils/apiRequest';
 
 function Daily() {
   const [habits, setHabits] = useState({});
+  
   const [loading, setLoading] = useState(true);
 
   const today = new Date().toISOString().split('T')[0];
