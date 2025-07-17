@@ -25,6 +25,7 @@ import HabitTracker from '../../components/HabitTracker/HabitTracker';
 import HabitView from '../../components/HabitView/HabitView';
 import Fast from '../../components/Fast/Fast';
 import FastView from '../../components/FastView/FastView';
+import RelationshipView from '../../components/Relationships/RelationshipView';
 
 const weatherAPI = process.env.REACT_APP_WEATHER_API;
 const weatherLOC = process.env.REACT_APP_WEATHER_LOC;
@@ -379,15 +380,15 @@ useEffect(() => {
             <div className="db-sidebar_relationships_box">
               <div className="db-sidebar_relationships_header">RECOMMENDED CHECK-INS:</div>
               <div className="db-sidebar_relationships_relations">
-                {mostDueRelationships.map((relationship) => (
+                {/* {mostDueRelationships.map((relationship) => (
                   <div key={relationship.id} className="db-sidebar_relationships_relation">
                     <div className="db-sidebar_relationships_relation_content">
                       {relationship.name}
-                      {/* <p>
+                      <p>
                         {relationship.daysLeft > 0
                           ? `Next call in ${relationship.daysLeft} day(s)`
                           : 'Overdue! Call now.'}
-                      </p> */}
+                      </p>
                       <div className="db-sidebar_relationships_relation_content_progress">
                         <div
                           className="db-sidebar_relationships_relation_content_progress-bar"
@@ -400,16 +401,17 @@ useEffect(() => {
                     </div>
                     <MdInfoOutline />
                   </div>
-                ))}
-  {/* <button onClick={refreshRelationships}>Refresh Relationships</button> */}
-
+                ))} */}
+                
+                <Relationships />
               </div>
             </div>
             <div className="db-sidebar-button" onClick={() => openSpecificModal("relationships")}>more relationships</div>
           </div>
           <Modal isOpen={openModal === "relationships"} onClose={closeModal}>
-            <Relationships setRelationships={setMostDueRelationships}/>
+            <RelationshipView />
           </Modal>
+
           
         </div>
       </div>
