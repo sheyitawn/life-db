@@ -2,7 +2,7 @@ import './App.css';
 import { ToastContainer } from 'react-toastify';
 import Dashboard from './pages/Dashboard/Dashboard';
 import backgroundVideo from './assets/background.mp4';
-
+import { AppDataProvider } from './contexts/AppDataContext';
 
 function App() {
   return (
@@ -24,8 +24,9 @@ function App() {
         playsInline>
      </video>
       <div className='background'>
-
-        <Dashboard />
+        <AppDataProvider>
+          <Dashboard />
+        </AppDataProvider>
       </div>
     </>
 
