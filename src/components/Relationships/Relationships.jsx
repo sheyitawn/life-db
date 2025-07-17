@@ -2,8 +2,9 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'rea
 import apiRequest from '../../utils/apiRequest';
 import { toast } from 'react-toastify';
 import './relationships.css'
+import { MdInfoOutline } from 'react-icons/md';
 
-const Relationships = () => {
+const RelationshipView = () => {
     const [relationships, setRelationships] = useState([]);
 
 
@@ -76,7 +77,7 @@ const Relationships = () => {
 
 
         fetchMostDueRelationships();
-        fetchAllRelationships()
+        // fetchAllRelationships()
     }, [setRelationships]);
 
     return (
@@ -85,39 +86,31 @@ const Relationships = () => {
                 <h1 className="relationships_header">relationships</h1>
                 <div className="relationships_relations">
                     {relationships.map((relationship) => (
-                        <div key={relationship.id} className="relationships_relation">
-                            <div className="relationships_relation_content">
-                                <p>{relationship.name}</p>
-                                {/* <p>
-                                    {relationship.daysLeft > 0
-                                        ? `Next call in ${relationship.daysLeft} day(s)`
-                                        : `Overdue by ${relationship.overdueDays} day(s)! Call now.`}
-                                </p> */}
-                                <div className="relationships_relation_content_progress">
-                                    <div
-                                        className="relationships_relation_content_progress-bar"
-                                        style={{
-                                            width: `${relationship.progress * 100}%`,
-                                            background: relationship.overdue
-                                                ? '#C62915'
-                                                : '#15BAC6',
-                                        }}
-                                    />
-                                </div>
-                                
-                            </div>
-
-                            <div className="relationships_relation_buttons">
-                                <button onClick={() => handleCheckIn(relationship.id)}>CHECK-IN</button>
-                                <button onClick={() => handleSkip(relationship.id)}>SKIP</button>    
-                            </div>
-                            
-                        </div>
-                    ))}
+                  <div key={relationship.id} className="db-sidebar_relationships_relation">
+                    <div className="db-sidebar_relationships_relation_content">
+                      {relationship.name}
+                      {/* <p>
+                        {relationship.daysLeft > 0
+                          ? `Next call in ${relationship.daysLeft} day(s)`
+                          : 'Overdue! Call now.'}
+                      </p> */}
+                      <div className="db-sidebar_relationships_relation_content_progress">
+                        <div
+                          className="db-sidebar_relationships_relation_content_progress-bar"
+                          style={{
+                            width: `${relationship.progress * 100}%`,
+                            background: relationship.overdue ? '#C62915' : '#15BAC6', // Red if overdue
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <MdInfoOutline />
+                  </div>
+                ))}
                 </div>
             </div>
         </div>
     );
 };
 
-export default Relationships;
+export default RelationshipView;
