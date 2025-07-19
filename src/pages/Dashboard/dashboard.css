@@ -32,6 +32,18 @@
     flex: 6;
 }
 
+.db-main_flex {
+  display: flex;
+  flex-wrap: wrap; /* allow wrapping to next line */
+  gap: 1rem;        /* optional spacing between items */
+}
+
+/* .db-main_flex > * {
+  flex: 1 1 200px;
+  min-width: 150px;
+} */
+
+
 .db-sidebar {
     flex: 2;
 

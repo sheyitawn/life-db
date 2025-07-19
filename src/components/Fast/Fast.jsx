@@ -37,7 +37,6 @@ const Fast = () => {
 
   return (
     <div className="fast">
-      <h3>🍽️ Fasting Status</h3>
       {fast?.active ? (
         <>
           <p>Fasting... Time left: <strong>{timeLeft}</strong></p>

@@ -83,7 +83,7 @@ const RelationshipView = () => {
     return (
         <div className="relationships">
             <div className="relationships_box">
-                <h1 className="relationships_header">relationships</h1>
+                {/* <h1 className="relationships_header">relationships</h1> */}
                 <div className="relationships_relations">
                     {relationships.map((relationship) => (
                   <div key={relationship.id} className="db-sidebar_relationships_relation">

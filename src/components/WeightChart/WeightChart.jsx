@@ -16,30 +16,31 @@ const WeightChart = () => {
   const [dataPoints, setDataPoints] = useState([]);
   const [projectedData, setProjectedData] = useState([]);
 
-  useEffect(() => {
-    const loadData = async () => {
-      const data = await apiRequest('/weighin');
-      const sorted = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
-      setDataPoints(sorted);
+useEffect(() => {
+  const loadData = async () => {
+    const data = await apiRequest('/weighin');
+    const sorted = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
+    setDataPoints(sorted);
 
-      const today = sorted.length > 0 ? new Date(sorted[sorted.length - 1].date) : new Date();
-      const projection = [];
+    // 🔒 Fixed starting date for projection (18 July 2025)
+    const staticStart = new Date('2025-07-18');
+    const projection = [];
 
-      let weight = 101; // Starting projected weight
-      for (let i = 0; i < 15; i++) {
-        const date = new Date(today);
-        date.setDate(date.getDate() + i * 7); // 1-week intervals
-        projection.push({
-          date: date.toISOString().split('T')[0],
-          projectedWeight: parseFloat((weight - i).toFixed(1)),
-        });
-      }
+    let weight = 101; // Starting projected weight
+    for (let i = 0; i < 15; i++) {
+      const date = new Date(staticStart);
+      date.setDate(staticStart.getDate() + i * 7); // Weekly intervals
+      projection.push({
+        date: date.toISOString().split('T')[0],
+        projectedWeight: parseFloat((weight - i).toFixed(1)),
+      });
+    }
 
-      setProjectedData(projection);
-    };
+    setProjectedData(projection);
+  };
 
-    loadData();
-  }, []);
+  loadData();
+}, []);
 
   const mergedData = dataPoints.map(d => ({ ...d }));
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './dashboard.css';
 import { FaRegSnowflake, FaSun, FaCloudRain, FaCloud, FaWind } from "react-icons/fa";
 import { MdLightbulb, MdInfoOutline, MdAdd } from 'react-icons/md';
+import { IoScaleSharp } from "react-icons/io5";
 import Timeline from '../../components/Timeline/Timeline';
 import Phases from '../../components/Phases/Phases'
 import MTest from '../../components/MTest'
@@ -58,7 +59,7 @@ const Dashboard = () => {
     Snow: <FaRegSnowflake />,
     Clouds: <FaCloud />,
     Wind: <FaWind />,
-    Default: <>n/a</>,
+    Default: <>?</>,
   };
 
   const parseDate = (dateString) => {
@@ -285,35 +286,36 @@ useEffect(() => {
               </div> */}
 
               <Birthday />
-              <HabitTracker />
-              <HabitView />
-              <Weight />
-              <WeightChart />
-              <Fast />
-              <FastView />
+              <button onClick={() => openSpecificModal("weight")}><IoScaleSharp />Log Weight</button>
+              <Modal isOpen={openModal === "weight"} onClose={closeModal}>
+                <Weight />
+                <WeightChart />
+              </Modal>
+
+              
               {/* weekly */}
               <h4>WEEKLY PROGRESS</h4>
-
               <div className="db-main_flex">
-                <div>
-                  <WeeklyProgress />
-                </div>
+                  <HabitView />
 
 
-                {/* ideas */}
 
-                <div className="db-sidebar_ideas" onClick={() => openSpecificModal("ideas")}>
-                  <div className="db-sidebar_ideas_box">
-                    <h2>
-                      <MdLightbulb />
-                    </h2>
-                    <p>idea of the day:</p>
-                    <div className="db-sidebar_ideas_box_content">
-                      GEOCACHING FOR RESTAURANTS
+                  {/* ideas */}
+                  <div className="db-sidebar_ideas" onClick={() => openSpecificModal("ideas")}>
+                    <div className="db-sidebar_ideas_box">
+                      <h2>
+                        <MdLightbulb />
+                      </h2>
+                      <p>idea of the day:</p>
+                      <div className="db-sidebar_ideas_box_content">
+                        GEOCACHING FOR RESTAURANTS
+                      </div>
                     </div>
+                    {/* <div className="db-sidebar-button" onClick={() => openSpecificModal("ideas")}>more ideas</div> */}
                   </div>
-                  {/* <div className="db-sidebar-button" onClick={() => openSpecificModal("ideas")}>more ideas</div> */}
-                </div>
+
+
+
               </div>
 
             </div>
@@ -343,12 +345,12 @@ useEffect(() => {
             </Modal>
           </div>
           <div className="db-sidebar_fast">
-            You should aim for a 20 hour fast today.
+            <Fast />
             <MdInfoOutline onClick={() => openSpecificModal("fasting")}/>
               {/* Modal 3 */}
             <Modal isOpen={openModal === "fasting"} onClose={closeModal}>
               <h1>fasting</h1>
-              <p>Since you are in the Follicular phase, it is recommended you fast for 20-24 hours.</p>
+              <FastView />
             </Modal>
           </div>
           <div className="db-sidebar_activity">
@@ -375,6 +377,11 @@ useEffect(() => {
             <div className="db-sidebar_daily_box">
               <Daily />
             </div>
+            <div className="db-sidebar-button" onClick={() => openSpecificModal("habits")}>more habits</div>
+            <Modal isOpen={openModal === "habits"} onClose={closeModal}>
+              <HabitTracker />
+                
+            </Modal>
           </div>
           <div className="db-sidebar_relationships">
             <div className="db-sidebar_relationships_box">

@@ -79,6 +79,7 @@ function Daily() {
           ))}
         </ul>
       )}
+      
     </div>
   );
 }

@@ -24,9 +24,9 @@ function App() {
         playsInline>
      </video>
       <div className='background'>
-        <AppDataProvider>
+        {/* <AppDataProvider> */}
           <Dashboard />
-        </AppDataProvider>
+        {/* </AppDataProvider> */}
       </div>
     </>
 
