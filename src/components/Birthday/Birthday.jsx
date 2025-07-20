@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import apiRequest from '../../utils/apiRequest';
+import { GiPresent } from "react-icons/gi";
+import { FaRegCheckCircle } from "react-icons/fa";
 import './birthday.css';
 
 const Birthday = () => {
@@ -39,10 +41,11 @@ const Birthday = () => {
 
     return (
         <div className="birthday-container">
-            <h3>🎉 Upcoming Birthdays</h3>
+            {/* <h3>🎉 Upcoming Birthdays</h3> */}
             {birthdays.map((person) => (
                 <div key={person.id} className="birthday-person">
-                    <strong>{person.name}</strong>'s birthday is in <strong>{person.daysAway}</strong> days!
+                    <div><strong>{person.name}'s</strong> birthday is in <strong>{person.daysAway}</strong> days!</div>
+                    
                     {person.present && (
                         <div style={{ marginTop: '0.5rem' }}>
                             {!person.got_present ? (
@@ -50,7 +53,7 @@ const Birthday = () => {
                                     className="present-button"
                                     onClick={() => handlePresentToggle(person.id, false)}
                                 >
-                                    🎁 Get Present
+                                    <GiPresent /> Get Present
                                 </button>
                             ) : (
                                 <button
@@ -58,7 +61,7 @@ const Birthday = () => {
                                     onClick={() => handlePresentToggle(person.id, true)}
                                     title="Click to mark present as not gotten"
                                 >
-                                    ✅ Present Gotten
+                                    <FaRegCheckCircle /> Got Present!
                                 </button>
                             )}
                         </div>
