@@ -1,6 +1,17 @@
 .relationships {
     /* overflow: none; */
+
     text-align: center;
+
+
+}
+
+.relationships-view {
+    /* overflow: none; */
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: start;
 
 }
 
@@ -10,7 +21,18 @@
     justify-content: space-around;
     align-items: center;
     gap: .7rem;
-    /* position: relative; */
+    position: relative;
+    width: 100%;
+}
+
+
+.relationships-view_relations {
+    display: flex;
+    flex-direction: column;
+    /* justify-content: space-around; */
+    /* align-items: center; */
+    gap: .7rem;
+    position: relative;
     /* width: 100%; */
 }
 
@@ -21,7 +43,8 @@
     align-items: center;
     padding: .5rem 1rem;
     border-radius: 10px;
-    width: 200%;
+    width: 100%;
+
 }
 
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'rea
 import apiRequest from '../../utils/apiRequest';
 import { toast } from 'react-toastify';
 import './relationships.css'
+import AddRelationship from './AddRelationship';
 
 const RelationshipView = () => {
     const [relationships, setRelationships] = useState([]);
@@ -80,10 +81,12 @@ const RelationshipView = () => {
     }, [setRelationships]);
 
     return (
-        <div className="relationships">
+        <div className="relationships-view">
             <div className="relationships_box">
                 <h1 className="relationships_header">relationships</h1>
-                <div className="relationships_relations">
+                <AddRelationship onAdded={fetchAllRelationships} />
+
+                <div className="relationships-view_relations">
                     {relationships.map((relationship) => (
                         <div key={relationship.id} className="relationships_relation">
                             <div className="relationships_relation_content">
