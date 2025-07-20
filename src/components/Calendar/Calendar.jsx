@@ -7,6 +7,19 @@ function Calendar() {
   const [error, setError] = useState(false);
   const [reauthNeeded, setReauthNeeded] = useState(false); // NEW
 
+  const getProgressPercentage = (start, end) => {
+    const now = new Date();
+    const startTime = new Date(start);
+    const endTime = new Date(end);
+
+    if (now < startTime || now > endTime) return 0;
+
+    const duration = endTime - startTime;
+    const elapsed = now - startTime;
+    return Math.min(100, Math.max(0, (elapsed / duration) * 100));
+  };
+
+
   const fetchEvents = async () => {
     setLoading(true);
     setError(false);
@@ -52,6 +65,15 @@ function Calendar() {
   };
   const isPast = (end) => new Date(end) < new Date();
 
+  useEffect(() => {
+  const interval = setInterval(() => {
+    setEvents((prev) => [...prev]); // triggers re-render to update progress bars
+  }, 60 * 1000); // every minute
+
+  return () => clearInterval(interval);
+}, []);
+
+
   return (
     <div className="calendar glass-card">
       {loading ? (
@@ -80,13 +102,24 @@ function Calendar() {
 
             return (
               <li key={event.id} className={itemClass}>
+                {now && !allDay && (
+                  // <div className="event-progress">
+                    <div
+                      className="event-progress-bar"
+                      style={{ width: `${getProgressPercentage(event.start, event.end)}%` }}
+                    />
+                  // </div>
+                )}
                 <strong>{event.summary}</strong>
                 {!allDay && (
                   <div className="event-time">
                     {formatTime(event.start)} – {formatTime(event.end)}
                   </div>
                 )}
+
+                
               </li>
+
             );
           })}
         </ul>

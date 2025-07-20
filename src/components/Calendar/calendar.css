@@ -1,3 +1,20 @@
+.calendar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.event-progress {
+  height: 6px;
+  background: #ddd;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+
 
 
 /* Main heading */
@@ -100,7 +117,21 @@
   background-color: var(--main-accent);
   /* border: 1px solid rgba(255, 0, 0, 0.904); */
   z-index: 2;
+  position: relative;
+  overflow: hidden;
 }
+
+.event-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.2); /* translucent overlay */
+  z-index: 0; /* behind the text */
+  pointer-events: none;
+  transition: width 1s linear;
+}
+
 
 /* Hash lines for past events */
 .past-event::after {
