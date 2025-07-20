@@ -41,6 +41,7 @@ const AddGoal = () => {
                         value={newGoal}
                         onChange={(e) => setNewGoal(e.target.value)}
                         placeholder="GOAL"
+                        autoComplete="off"
                     />
                 </div>
                 <div>
@@ -55,9 +56,9 @@ const AddGoal = () => {
             </div>
 
             <button onClick={handleAddGoal}>ADD GOAL</button>
-            <h4 className="daily-success">
+            <p className="daily-success">
                 {message && <h1>{message}</h1>}
-            </h4>
+            </p>
         </div>
     );
 };
