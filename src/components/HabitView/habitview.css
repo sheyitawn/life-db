@@ -1,7 +1,18 @@
 .habit-row {
+
+  /* margin-bottom: 10px; */
+  /* min-width: 500px; */
+
+
+  text-align: center;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 1rem 1rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 10px;
+  background-color: var(--box);
+
 }
 
 .habit-label {
@@ -9,6 +20,7 @@
   align-items: center;
   width: 120px;
   font-weight: bold;
+  text-align: left;
 }
 
 .habit-icon {
@@ -17,20 +29,21 @@
 
 .habit-days {
   display: flex;
-  gap: 8px;
+  gap: .8rem;
 }
 
 .day-box {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
   border: 2px solid #4caf50;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 0.75rem;
+  font-size: .7rem;
   font-weight: bold;
   color: #fff; /* dark text */
   background-color: rgba(76, 175, 80, 0.1); /* fallback */
   transition: background-color 0.3s ease-in-out;
+  cursor: pointer;
 }

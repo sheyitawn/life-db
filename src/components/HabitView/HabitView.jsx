@@ -23,8 +23,7 @@ const HabitView = () => {
   return (
     <div className="habit-row">
       <div className="habit-label">
-        <span className="habit-icon">🧩</span>
-        <span>Overall</span>
+        <h4>WEEKLY PROGRESS</h4>
       </div>
       <div className="habit-days">
         {habitData.map(({ date, habits }) => {
