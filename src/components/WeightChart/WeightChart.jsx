@@ -22,14 +22,17 @@ useEffect(() => {
     const sorted = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
     setDataPoints(sorted);
 
-    // 🔒 Fixed starting date for projection (18 July 2025)
-    const staticStart = new Date('2025-07-18');
-    const projection = [];
+    // 🔎 Find starting date when weight ≈ 101
+    const startPoint = sorted.find(d => parseFloat(d.weight) === 101);
+    const startDate = startPoint ? new Date(startPoint.date) : new Date(sorted[0]?.date || '2025-07-18');
 
-    let weight = 101; // Starting projected weight
+    // 📈 Generate projection from the matching point
+    const projection = [];
+    let weight = 101;
+
     for (let i = 0; i < 15; i++) {
-      const date = new Date(staticStart);
-      date.setDate(staticStart.getDate() + i * 7); // Weekly intervals
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i * 7); // Weekly intervals
       projection.push({
         date: date.toISOString().split('T')[0],
         projectedWeight: parseFloat((weight - i).toFixed(1)),
@@ -42,18 +45,19 @@ useEffect(() => {
   loadData();
 }, []);
 
-  const mergedData = dataPoints.map(d => ({ ...d }));
+
+const mergedData = projectedData.map(d => ({ ...d })); // Clone each object
+
+dataPoints.forEach(actual => {
+  const index = mergedData.findIndex(d => d.date === actual.date);
+  if (index !== -1) {
+    mergedData[index] = { ...mergedData[index], ...actual }; // Merge into a fresh object
+  } else {
+    mergedData.push({ ...actual }); // Clone to be safe
+  }
+});
 
 
-  // Add projected weights to the merged data
-  projectedData.forEach((proj) => {
-    const existing = mergedData.find((d) => d.date === proj.date);
-    if (existing) {
-      existing.projectedWeight = proj.projectedWeight;
-    } else {
-      mergedData.push(proj);
-    }
-  });
 
   // Sort by date again
   const sortedMergedData = mergedData.sort((a, b) => new Date(a.date) - new Date(b.date));

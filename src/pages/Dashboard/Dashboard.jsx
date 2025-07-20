@@ -27,6 +27,7 @@ import HabitView from '../../components/HabitView/HabitView';
 import Fast from '../../components/Fast/Fast';
 import FastView from '../../components/FastView/FastView';
 import RelationshipView from '../../components/Relationships/RelationshipView';
+import ShowWeight from '../../components/Weight/ShowWeight';
 
 const weatherAPI = process.env.REACT_APP_WEATHER_API;
 const weatherLOC = process.env.REACT_APP_WEATHER_LOC;
@@ -232,7 +233,7 @@ useEffect(() => {
               <a href="https://openweathermap.org" target="_blank" rel="noopener noreferrer" className="weather-container">
                 {weather ? weatherIconMap[weather] || weatherIconMap.Default : <FaCloud />}
                 {temperature !== null && (
-                  <span className="weather-temp">{Math.round(temperature)}°C</span>
+                  <div className="db_weather-temp">{Math.round(temperature)}°C</div>
                 )}
               </a>
 
@@ -257,22 +258,20 @@ useEffect(() => {
             <Calendar />
             </div>
             <div className="db-main_content_daily">
-              <div>
-                <h4>DAILY PROJECT GOAL</h4>
-                  <div onClick={() => openSpecificModal("daily")}>
-                    {
-                      dailyGoal ? (
-                        <p>{dailyGoal.goal}</p>
-                      ) : (
-                        <button> <MdAdd /> Set Goal</button>
-                      )
-                    }
-                  </div>
-
-                  <Modal isOpen={openModal === "daily"} onClose={closeModal}>
-                    <DailyGoal />
-                  </Modal>
+              <h4>DAILY PROJECT GOAL</h4>
+              <div className="db-main_content_daily-goal" onClick={() => openSpecificModal("daily")}>
+                {
+                  dailyGoal ? (
+                    <p>{dailyGoal.goal}</p>
+                  ) : (
+                    <button> <MdAdd /> Set Goal</button>
+                  )
+                }
               </div>
+
+                <Modal isOpen={openModal === "daily"} onClose={closeModal}>
+                  <DailyGoal />
+                </Modal>
               {/* adventure */}
               {/* <div>
                 <h4>ADVENTURE</h4>
@@ -285,18 +284,22 @@ useEffect(() => {
                 </Modal>
               </div> */}
 
-              <Birthday />
-              <button onClick={() => openSpecificModal("weight")}><IoScaleSharp />Log Weight</button>
-              <Modal isOpen={openModal === "weight"} onClose={closeModal}>
-                <Weight />
-                <WeightChart />
-              </Modal>
-
               
-              {/* weekly */}
-              <h4>WEEKLY PROGRESS</h4>
               <div className="db-main_flex">
-                  <HabitView />
+                {/* weekly habits */}
+                <HabitView />
+                {/* upcoming birthdays */}
+                <Birthday />
+                {/* weight */}
+                <ShowWeight onClick={() => openSpecificModal("weight")}/>
+                <Modal isOpen={openModal === "weight"} onClose={closeModal}>
+                  <Weight />
+                  <WeightChart />
+                </Modal>
+
+                
+                {/* weekly */}
+                
 
 
 
@@ -308,7 +311,7 @@ useEffect(() => {
                       </h2>
                       <p>idea of the day:</p>
                       <div className="db-sidebar_ideas_box_content">
-                        GEOCACHING FOR RESTAURANTS
+                        sEMG Wristband
                       </div>
                     </div>
                     {/* <div className="db-sidebar-button" onClick={() => openSpecificModal("ideas")}>more ideas</div> */}

@@ -53,11 +53,29 @@
 
 }
 
+
+
 .db-info {
     display: flex;
     align-items: center;
     justify-content: start;
-    gap: .5rem;
+    gap: 1.5rem;
+
+}
+
+
+.db-info a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .9rem;
+    text-emphasis: none;
+    text-decoration: none;
+}
+
+.db-info a .db_weather-temp {
+
+    font-size: .6em;
 }
 
 
@@ -125,8 +143,13 @@
     border-radius: 30px;
     height: 100%;
     padding-left: 2rem;
-    gap: 3rem;
-    /* height: 100%; */
+    /* gap: 3rem; */
+    height: 100%;
+}
+
+
+.db-main_content_daily .db-main_content_daily-goal {
+    margin: .5rem 0;
 }
 
 .db-main_content_daily h4 {
