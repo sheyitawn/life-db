@@ -298,24 +298,20 @@ useEffect(() => {
                 </Modal>
 
                 
-                {/* weekly */}
-                
 
-
-
-                  {/* ideas */}
-                  <div className="db-sidebar_ideas" onClick={() => openSpecificModal("ideas")}>
-                    <div className="db-sidebar_ideas_box">
-                      <h2>
-                        <MdLightbulb />
-                      </h2>
-                      <p>idea of the day:</p>
-                      <div className="db-sidebar_ideas_box_content">
-                        sEMG Wristband
-                      </div>
+                {/* ideas */}
+                <div className="db-sidebar_ideas" onClick={() => openSpecificModal("ideas")}>
+                  <div className="db-sidebar_ideas_box">
+                    <h2>
+                      <MdLightbulb />
+                    </h2>
+                    <p>idea of the day:</p>
+                    <div className="db-sidebar_ideas_box_content">
+                      sEMG Wristband
                     </div>
-                    {/* <div className="db-sidebar-button" onClick={() => openSpecificModal("ideas")}>more ideas</div> */}
                   </div>
+                  {/* <div className="db-sidebar-button" onClick={() => openSpecificModal("ideas")}>more ideas</div> */}
+                </div>
 
 
 

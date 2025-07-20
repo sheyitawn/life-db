@@ -19,7 +19,7 @@ const Activities = () => {
     return (
         <div className="overview-container">
             <div className="overview-section">
-                <h4>🌟 Weekly Activity</h4>
+                <h4>Weekly</h4>
                 {weeklyActivity ? (
                     <p className={weeklyActivity.done ? 'crossed-out' : ''}>
                         {weeklyActivity.title}
@@ -30,7 +30,7 @@ const Activities = () => {
             </div>
 
             <div className="overview-section">
-                <h4>🏋️‍♂️ Today’s Exercises</h4>
+                <h4>Today</h4>
                 {exercises.length ? (
                     <ul>
                         {exercises.map((e) => (
@@ -40,7 +40,7 @@ const Activities = () => {
                         ))}
                     </ul>
                 ) : (
-                    <p>Rest day 🎉</p>
+                    <p>Rest day</p>
                 )}
             </div>
         </div>

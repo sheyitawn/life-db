@@ -86,17 +86,17 @@ const RelationshipView = () => {
                 {/* <h1 className="relationships_header">relationships</h1> */}
                 <div className="relationships_relations">
                     {relationships.map((relationship) => (
-                  <div key={relationship.id} className="db-sidebar_relationships_relation">
-                    <div className="db-sidebar_relationships_relation_content">
+                  <div key={relationship.id} className="relationships_relation">
+                    <div className="relationships_relation_content">
                       {relationship.name}
                       {/* <p>
                         {relationship.daysLeft > 0
                           ? `Next call in ${relationship.daysLeft} day(s)`
                           : 'Overdue! Call now.'}
                       </p> */}
-                      <div className="db-sidebar_relationships_relation_content_progress">
+                      <div className="relationships_relation_content_progress">
                         <div
-                          className="db-sidebar_relationships_relation_content_progress-bar"
+                          className="relationships_relation_content_progress-bar"
                           style={{
                             width: `${relationship.progress * 100}%`,
                             background: relationship.overdue ? '#C62915' : '#15BAC6', // Red if overdue

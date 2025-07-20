@@ -1,6 +1,10 @@
 body {
   background-color: black;
   color: white;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  
 
   /* colour variables */
     --box: rgb(29, 30, 32);
@@ -9,7 +13,7 @@ body {
     --main-accent: #C62915;
     --main-accent-dark: #7c1a0d;
     --toastify-color-progress-dark: var(--main-accent);
-    /* overflow: hidden; */
+    overflow: hidden;
 
 
     

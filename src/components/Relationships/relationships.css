@@ -3,7 +3,7 @@
 
     text-align: center;
 
-
+    width: 100%;
 }
 
 .relationships-view {
@@ -33,17 +33,20 @@
     /* align-items: center; */
     gap: .7rem;
     position: relative;
-    /* width: 100%; */
+    width: 100%;
 }
 
 .relationships_relation {
-    background-color: black;
+    background-color:  var(--box);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: .5rem 1rem;
-    border-radius: 10px;
+    padding: .5rem;
+    border-radius: 15px;
     width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    
 
 }
 
@@ -55,7 +58,7 @@
     justify-content: center;
     position: relative;
     flex: 5;
-    margin: 0 1rem;
+    margin: 0 .5rem;
     
 }
 
@@ -65,7 +68,7 @@
 
 .relationships_relation_content_progress {
     position: relative;
-    width: 100%;
+    width: 80%;
     height: 5px;
     border-radius: 5px;
     overflow: hidden;
