@@ -14,7 +14,9 @@ const Modal = ({ isOpen, onClose, children }) => {
         <button className="modal-close" onClick={onClose}>
           &times;
         </button>
-        {children}
+        <div className="modal-scroll">
+          {children}
+        </div>
       </div>
     </div>
   );
