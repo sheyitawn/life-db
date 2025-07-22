@@ -59,7 +59,7 @@ const ShowWeight = ({ onClick }) => {
             <span className="weight-card-weight">
               {showWeight ? weightData.weight : '**'}
             </span>
-            <span className="weight-card-unit">lbs</span>
+            <span className="weight-card-unit">kg</span>
             <button onClick={() => setShowWeight(!showWeight)}>
               {showWeight ? <IoEyeOffSharp /> : <IoEyeSharp />}
             </button>
