@@ -8,21 +8,47 @@ const Habit = ({ habitKey, label, icon }) => {
   const [weeklyData, setWeeklyData] = useState([]);
 
   useEffect(() => {
-    const loadHabits = async () => {
-      const data = await apiRequest('/habits/weekly');
-      setWeeklyData(data);
-    };
     loadHabits();
   }, []);
+
+  const loadHabits = async () => {
+    const data = await apiRequest('/habits/weekly');
+    setWeeklyData(data);
+  };
+
+  const toggleHabit = async (date) => {
+    try {
+      await apiRequest('/habits/toggle', 'POST', { date, habitKey });
+      // Refresh local state
+      setWeeklyData((prev) =>
+        prev.map((entry) =>
+          entry.date === date
+            ? {
+                ...entry,
+                habits: {
+                  ...entry.habits,
+                  [habitKey]: !entry.habits[habitKey],
+                },
+              }
+            : entry
+        )
+      );
+    } catch (err) {
+      console.error('Failed to toggle habit:', err);
+    }
+  };
 
   const getDayCircle = (entry) => {
     const day = new Date(entry.date).getDay();
     const completed = entry.habits[habitKey];
+
     return (
       <div
         key={entry.date}
         className={`habit-day ${completed ? 'completed' : 'missed'}`}
         title={daysOfWeek[day]}
+        onClick={() => toggleHabit(entry.date)}
+        style={{ cursor: 'pointer' }}
       >
         {new Date(entry.date).getDate()}
       </div>
