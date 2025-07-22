@@ -287,7 +287,7 @@ useEffect(() => {
               
               <div className="db-main_flex">
                 {/* weekly habits */}
-                <HabitView />
+                <HabitView onClick={() => openSpecificModal("habits")}/>
                 {/* upcoming birthdays */}
                 <Birthday />
                 {/* weight */}

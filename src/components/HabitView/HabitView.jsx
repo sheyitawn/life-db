@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './habitview.css';
 import apiRequest from '../../utils/apiRequest';
 
-const HabitView = () => {
+const HabitView = ({onClick}) => {
   const [habitData, setHabitData] = useState([]);
   const [habitKeys, setHabitKeys] = useState([]);
 
@@ -36,6 +36,7 @@ const HabitView = () => {
               key={date}
               className="day-box"
               title={`${date}: ${completedCount}/${total} habits done`}
+              onClick={onClick}
               style={{
                 backgroundColor: `rgba(76, 175, 80, ${backgroundOpacity})`,
               }}
