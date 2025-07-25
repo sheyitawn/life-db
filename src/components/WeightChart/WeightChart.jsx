@@ -1,93 +1,112 @@
-import React, { useEffect, useState } from 'react';
-import './weightchart.css';
-import apiRequest from '../../utils/apiRequest';
+
+import React, { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
   XAxis,
+  YAxis,
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
   Legend,
-  YAxis,
-} from 'recharts';
+} from "recharts";
+
+import apiRequest from "../../utils/apiRequest";
+import "./weightchart.css";
+import add from 'date-fns/add';
+import format from 'date-fns/format';
+import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
+
+// Format timestamps to "dd/MMM" like "25/Jul"
+const dateFormatter = (timestamp) => format(new Date(timestamp), "dd/MMM");
+
+// Create evenly spaced ticks between startDate and endDate
+const getTicks = (startDate, endDate, numTicks) => {
+  const diffDays = differenceInCalendarDays(endDate, startDate);
+  const ticks = [];
+  for (let i = 0; i < numTicks; i++) {
+    const dayOffset = Math.round((diffDays / (numTicks - 1)) * i);
+    ticks.push(add(startDate, { days: dayOffset }).getTime());
+  }
+  return ticks;
+};
 
 const WeightChart = () => {
-  const [dataPoints, setDataPoints] = useState([]);
-  const [projectedData, setProjectedData] = useState([]);
+  const [weights, setWeights] = useState([]);
+  // Special points as timestamps
+  const specialPoints = [
+    { date: new Date(2025, 6, 18).getTime(), weight: 101 }, // July 25, 2018
+    { date: new Date(2025, 10, 10).getTime(), weight: 85 },  // Nov 10, 2025
+  ];
 
-useEffect(() => {
-  const loadData = async () => {
-    const data = await apiRequest('/weighin');
-    const sorted = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
-    setDataPoints(sorted);
+  useEffect(() => {
+    async function fetchWeights() {
+      const data = await apiRequest("/weighin");
 
-    // 🔎 Find starting date when weight ≈ 101
-    const startPoint = sorted.find(d => parseFloat(d.weight) === 101);
-    const startDate = startPoint ? new Date(startPoint.date) : new Date(sorted[0]?.date || '2025-07-18');
+      // Normalize API dates to timestamps:
+      const normalized = data
+        .map(({ date, weight }) => {
+          // Parse date string into Date object; adjust format if needed here
+          // [Unverified] Assuming ISO or parseable format
+          const parsedDate = new Date(date);
+          return { date: parsedDate.getTime(), weight };
+        })
+        .sort((a, b) => a.date - b.date);
 
-    // 📈 Generate projection from the matching point
-    const projection = [];
-    let weight = 101;
-
-    for (let i = 0; i < 15; i++) {
-      const date = new Date(startDate);
-      date.setDate(startDate.getDate() + i * 7); // Weekly intervals
-      projection.push({
-        date: date.toISOString().split('T')[0],
-        projectedWeight: parseFloat((weight - i).toFixed(1)),
-      });
+      setWeights(normalized);
     }
 
-    setProjectedData(projection);
-  };
+    fetchWeights();
+  }, []);
 
-  loadData();
-}, []);
-
-
-const mergedData = projectedData.map(d => ({ ...d })); // Clone each object
-
-dataPoints.forEach(actual => {
-  const index = mergedData.findIndex(d => d.date === actual.date);
-  if (index !== -1) {
-    mergedData[index] = { ...mergedData[index], ...actual }; // Merge into a fresh object
-  } else {
-    mergedData.push({ ...actual }); // Clone to be safe
-  }
-});
-
-
-
-  // Sort by date again
-  const sortedMergedData = mergedData.sort((a, b) => new Date(a.date) - new Date(b.date));
+  // Determine date range for ticks (earliest and latest date between data and special points)
+  const allDates = [...weights.map(d => d.date), ...specialPoints.map(d => d.date)];
+  const minDate = new Date(Math.min(...allDates));
+  const maxDate = new Date(Math.max(...allDates));
+  const ticks = getTicks(minDate, maxDate, 6); // 6 ticks on x-axis
 
   return (
     <div className="weight-chart">
       <h3>📈 Weight Tracker</h3>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={sortedMergedData} margin={{ top: 20, right: 30, left: 10, bottom: 10 }}>
+        <LineChart margin={{ top: 20, right: 30, left: 10, bottom: 10 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-          <YAxis domain={['auto', 'auto']} tick={{ fontSize: 12 }} />
-          <Tooltip />
+          <XAxis
+            dataKey="date"
+            domain={[minDate.getTime(), maxDate.getTime()]}
+            ticks={ticks}
+            scale="time"
+            type="number"
+            tickFormatter={dateFormatter}
+            tick={{ fontSize: 12 }}
+          />
+          <YAxis tick={{ fontSize: 12 }} />
+          <Tooltip labelFormatter={(val) => dateFormatter(val)} />
           <Legend verticalAlign="top" height={36} />
+
+          {/* Original weights line */}
           <Line
             type="monotone"
+            data={weights}
             dataKey="weight"
             stroke="#4caf50"
             strokeWidth={2}
             dot={{ r: 4 }}
-            name="Actual Weight (kg)"
+            name="Weight (kg)"
+            connectNulls={false}
           />
+
+          {/* Special points line with isolated points */}
           <Line
             type="monotone"
-            dataKey="projectedWeight"
-            stroke="#2196f3"
-            strokeDasharray="5 5"
-            strokeWidth={2}
-            dot={false}
-            name="Projected Weight"
+            data={specialPoints}
+            dataKey="weight"
+            stroke="#ff5722"
+            strokeWidth={3}
+            dot={{ r: 6 }}
+            name="Special Points"
+            isAnimationActive={false}
+            connectNulls={false}
           />
         </LineChart>
       </ResponsiveContainer>
