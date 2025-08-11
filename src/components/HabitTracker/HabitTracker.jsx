@@ -4,9 +4,9 @@ import apiRequest from '../../utils/apiRequest';
 
 const HABIT_ICONS = {
   water_1l: '📚',
-  outdoor_walk: '🧘‍♂️',
+  outdoor_walk_30m: '🧘‍♂️',
   treadmill_30m: '🚶‍♂️',
-  workout: '🏋️‍♀️',
+  meal_prep: '🏋️‍♀️',
   weigh_in: '⚖️',
 };
 
