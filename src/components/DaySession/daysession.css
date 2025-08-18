@@ -1,0 +1,10 @@
+.day-session { display: inline-flex; }
+.day-session-btn {
+  padding: .6rem 1rem;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+.day-session-btn.start { background: #2196f3; color: #061019; }
+.day-session-btn.end   { background: #ff5252; color: #1a0d0d; }

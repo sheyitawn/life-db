@@ -47,3 +47,61 @@
   transition: background-color 0.3s ease-in-out;
   cursor: pointer;
 }
+
+
+/* ===== Monthly calendar layout (scoped to .habit-month) ===== */
+.habit-month .calendar-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  column-gap: 0.3rem;
+  margin: 0.3rem 0 0.4rem;
+}
+
+.habit-month .calendar-header-cell {
+  text-align: center;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.habit-month .calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.3rem;
+  grid-auto-rows: 32px; /* uniform row height */
+}
+
+.habit-month .calendar-cell {
+  border-radius: 6px;
+  border: 2px solid #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.78rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 120ms ease, background-color 120ms ease;
+  aspect-ratio: 1 / 1; /* keep squares */
+  padding: 0;          /* ensure consistent square */
+}
+
+.habit-month .calendar-cell:hover {
+  transform: translateY(-1px);
+}
+
+.habit-month .calendar-cell.empty {
+  border-color: transparent;
+  background: transparent;
+  cursor: default;
+  pointer-events: none;
+}
+
+.habit-month .calendar-cell.today {
+  outline: 2px solid rgba(255, 255, 255, 0.25);
+  outline-offset: 1px;
+}
+
+.habit-month .calendar-daynum {
+  line-height: 1;
+}

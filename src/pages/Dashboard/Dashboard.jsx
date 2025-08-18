@@ -28,6 +28,9 @@ import Fast from '../../components/Fast/Fast';
 import FastView from '../../components/FastView/FastView';
 import RelationshipView from '../../components/Relationships/RelationshipView';
 import ShowWeight from '../../components/Weight/ShowWeight';
+import DaySession from '../../components/DaySession/DaySession';
+import SunsetWalk from '../../components/SunsetWalk/SunsetWalk';
+import HabitMonthView from '../../components/HabitView/HabitMonthView';
 
 const weatherAPI = process.env.REACT_APP_WEATHER_API;
 const weatherLOC = process.env.REACT_APP_WEATHER_LOC;
@@ -288,6 +291,8 @@ useEffect(() => {
               <div className="db-main_flex">
                 {/* weekly habits */}
                 <HabitView onClick={() => openSpecificModal("habits")}/>
+
+                <HabitMonthView />
                 {/* upcoming birthdays */}
                 <Birthday />
                 {/* weight */}
@@ -297,7 +302,8 @@ useEffect(() => {
                   <WeightChart />
                 </Modal>
 
-                
+                <SunsetWalk />
+
 
                 {/* ideas */}
                 <div className="db-sidebar_ideas" onClick={() => openSpecificModal("ideas")}>
@@ -313,6 +319,7 @@ useEffect(() => {
                   {/* <div className="db-sidebar-button" onClick={() => openSpecificModal("ideas")}>more ideas</div> */}
                 </div>
 
+                <DaySession />
 
 
               </div>
