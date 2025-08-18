@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Habit from '../Habit/Habit'; // Adjust the path as needed
 import apiRequest from '../../utils/apiRequest';
+import HabitMonthView from '../HabitView/HabitMonthView';
 
 const HABIT_ICONS = {
   water_1l: '📚',
@@ -30,6 +31,8 @@ const HabitTracker = () => {
 
   return (
     <div style={{ padding: '1rem', background: '#121212', minHeight: '100vh', color: 'white' }}>
+                  <HabitMonthView />
+      
       <h2 style={{ marginBottom: '1rem' }}>📅 Weekly Habit Tracker</h2>
       {habitKeys.map((key) => (
         <Habit

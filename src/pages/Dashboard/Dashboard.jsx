@@ -292,7 +292,6 @@ useEffect(() => {
                 {/* weekly habits */}
                 <HabitView onClick={() => openSpecificModal("habits")}/>
 
-                <HabitMonthView />
                 {/* upcoming birthdays */}
                 <Birthday />
                 {/* weight */}
