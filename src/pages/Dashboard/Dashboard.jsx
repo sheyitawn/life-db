@@ -358,24 +358,24 @@ useEffect(() => {
               <FastView />
             </Modal>
           </div>
-          <div className="db-sidebar_activity">
+          {/* <div className="db-sidebar_activity">
             <div className="db-sidebar_activity_box">
               <div className="db-sidebar_activity_header">RECOMMENDED ACTIVITY:</div>
               <Activities />
-              {/* <div className="db-sidebar_activity_content">
+              <div className="db-sidebar_activity_content">
                 {mainActivity && (
                   <p>{mainActivity.title}</p>
                 )}
-              </div> */}
+              </div>
             </div>
             <div className="db-sidebar-button" onClick={() => openSpecificModal("activities")}>more activities</div>
-          </div>
-
+          </div> */}
+{/* 
           <Modal isOpen={openModal === "activities"} onClose={closeModal}>
               <h1>activities</h1>
 
               <ActivityManager />
-            </Modal>
+            </Modal> */}
           <div className="db-sidebar_daily">
             {/* <div className="db-sidebar_daily_header">DAILY</div> */}
 
