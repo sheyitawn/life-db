@@ -4,11 +4,8 @@ import apiRequest from '../../utils/apiRequest';
 import HabitMonthView from '../HabitView/HabitMonthView';
 
 const HABIT_ICONS = {
-  water_1l: '📚',
-  outdoor_walk_30m: '🧘‍♂️',
-  treadmill_30m: '🚶‍♂️',
-  meal_prep: '🏋️‍♀️',
-  weigh_in: '⚖️',
+  steps_5000: '🚶‍♂️',
+  track_meals: '⚖️',
 };
 
 const HabitTracker = () => {
