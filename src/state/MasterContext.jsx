@@ -1,22 +1,41 @@
 // src/state/MasterContext.jsx
-import React, { createContext, useContext, useMemo, useState, useCallback } from 'react';
+import React, { createContext, useContext, useMemo, useState, useCallback, useEffect } from "react";
 import {
-  loadMasterFromLocalStorage,
-  saveMasterToLocalStorage,
+  loadMaster,
+  saveMaster,
   importMasterFromFile,
   exportMasterToDownload,
   clearMaster,
-} from './masterStorage';
+} from "./masterStorage";
 
 const MasterContext = createContext(null);
 
 export function MasterProvider({ children }) {
-  const [master, setMaster] = useState(() => loadMasterFromLocalStorage());
+  const [master, setMaster] = useState(null);
+
+  // ✅ load once (async) from IndexedDB (with LS migration)
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const loaded = await loadMaster();
+      if (mounted) setMaster(loaded);
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const updateMaster = useCallback((updater) => {
     setMaster((prev) => {
-      const next = typeof updater === 'function' ? updater(prev) : updater;
-      return saveMasterToLocalStorage(next);
+      if (!prev) return prev;
+      const next = typeof updater === "function" ? updater(prev) : updater;
+
+      // ✅ persist async, but keep UI immediate
+      (async () => {
+        await saveMaster(next);
+      })();
+
+      return next;
     });
   }, []);
 
@@ -25,34 +44,38 @@ export function MasterProvider({ children }) {
       updateMaster,
 
       async importFromFile(file) {
-        const imported = await importMasterFromFile(file); // already saves normalized version
+        const imported = await importMasterFromFile(file); // saves
         setMaster(imported);
         return imported;
       },
 
-      exportToFile(filename = 'life-dashboard.master.json') {
-        exportMasterToDownload(master, filename);
+      async exportToFile(filename = "life-dashboard.master.json") {
+        if (!master) return;
+        await exportMasterToDownload(master, filename);
       },
 
-      clearAll() {
-        const cleared = clearMaster(); // removes LS key
-        setMaster(cleared);            // reset state, and DO NOT auto-resave defaults
+      async clearAll() {
+        const cleared = await clearMaster();
+        setMaster(cleared);
         return cleared;
       },
     };
   }, [master, updateMaster]);
 
-  // IMPORTANT: provide BOTH `actions` and the individual functions (spread),
-  // so components can do either `actions.exportToFile(...)` or `exportToFile(...)`.
-  return (
-    <MasterContext.Provider value={{ master, actions, ...actions }}>
-      {children}
-    </MasterContext.Provider>
-  );
+  // while loading, you can render children or show nothing
+  if (!master) {
+    return (
+      <MasterContext.Provider value={{ master: null, actions, ...actions }}>
+        {children}
+      </MasterContext.Provider>
+    );
+  }
+
+  return <MasterContext.Provider value={{ master, actions, ...actions }}>{children}</MasterContext.Provider>;
 }
 
 export function useMaster() {
   const ctx = useContext(MasterContext);
-  if (!ctx) throw new Error('useMaster must be used inside <MasterProvider>.');
+  if (!ctx) throw new Error("useMaster must be used inside <MasterProvider>.");
   return ctx;
 }
