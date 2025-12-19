@@ -1,0 +1,63 @@
+/* Standard widget card */
+.ld-widget{
+  background: var(--box);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 18px;
+  padding: 0.9rem 1rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.25);
+}
+
+.ld-widget__header{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.ld-widget__titles{ display:flex; flex-direction:column; gap:0.15rem; }
+
+.ld-widget__title{
+  font-weight: 800;
+  letter-spacing: .04em;
+  font-size: .85em;
+  color: rgba(255,255,255,0.85);
+  text-transform: uppercase;
+}
+
+.ld-widget__subtitle{
+  font-size: .8em;
+  color: rgba(255,255,255,0.55);
+}
+
+.ld-widget__right{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ld-widget__body{
+  width: 100%;
+}
+
+/* Standard modal */
+.ld-modal{
+  background: rgba(0,0,0,0.30);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 22px;
+  padding: 1rem;
+}
+
+.ld-modal__title{
+  font-weight: 800;
+  letter-spacing: .03em;
+  margin-bottom: .75rem;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.ld-modal__body{
+  padding: .25rem 0;
+}
