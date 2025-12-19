@@ -2,7 +2,7 @@ import './App.css';
 import { ToastContainer } from 'react-toastify';
 import backgroundVideo from './assets/background.mp4';
 
-import { BrowserRouter, Routes, Route } from 'react-router';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Dashboard from './pages/Dashboard/Dashboard';
 import ConfigPage from './pages/Config/ConfigPage';
