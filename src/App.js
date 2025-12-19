@@ -1,8 +1,13 @@
 import './App.css';
 import { ToastContainer } from 'react-toastify';
-import Dashboard from './pages/Dashboard/Dashboard';
 import backgroundVideo from './assets/background.mp4';
-import { AppDataProvider } from './contexts/AppDataContext';
+
+import { BrowserRouter, Routes, Route } from 'react-router';
+
+import Dashboard from './pages/Dashboard/Dashboard';
+import ConfigPage from './pages/Config/ConfigPage';
+
+import { MasterProvider } from './state/MasterContext';
 
 function App() {
   return (
@@ -17,19 +22,26 @@ function App() {
         theme="dark"
       />
 
-      <video src={backgroundVideo} className="video-bg"
+      <video
+        src={backgroundVideo}
+        className="video-bg"
         autoPlay
         loop
         muted
-        playsInline>
-     </video>
-      <div className='background'>
-        {/* <AppDataProvider> */}
-          <Dashboard />
-        {/* </AppDataProvider> */}
+        playsInline
+      />
+
+      <div className="background">
+        <MasterProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/config" element={<ConfigPage />} />
+            </Routes>
+          </BrowserRouter>
+        </MasterProvider>
       </div>
     </>
-
   );
 }
 
