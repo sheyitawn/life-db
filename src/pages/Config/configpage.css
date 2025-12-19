@@ -1,0 +1,537 @@
+.cfg-shell {
+  width: 94%;
+  height: calc(100% - 6rem);
+  margin: 3rem auto;
+  padding: 1rem;
+  box-sizing: border-box;
+  color: white;
+}
+
+.cfg-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.cfg-title {
+  margin: 0;
+  font-weight: normal;
+  font-size: 2.2rem;
+}
+
+.cfg-subtitle {
+  margin: 0.3rem 0 0;
+  color: var(--gray-text);
+  font-size: 0.95rem;
+}
+
+.cfg-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cfg-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.cfg-tab {
+  opacity: 0.7;
+}
+
+.cfg-tab-active {
+  opacity: 1;
+  outline: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.cfg-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  padding: 1.25rem;
+}
+
+.cfg-section-title {
+  margin: 0 0 0.75rem;
+  font-weight: normal;
+}
+
+.cfg-help {
+  color: var(--gray-text);
+  margin: 0 0 1rem;
+}
+
+.cfg-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+}
+
+@media (max-width: 900px) {
+  .cfg-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cfg-field label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--gray-text);
+  margin-bottom: 0.4rem;
+}
+
+.cfg-field input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: white;
+  border-radius: 14px;
+  padding: 0.7rem 0.85rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.cfg-row {
+  margin-top: 0.9rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.cfg-row-wrap {
+  flex-wrap: wrap;
+}
+
+.cfg-hr {
+  border: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 1.2rem 0;
+}
+
+.cfg-file {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.cfg-file input {
+  display: none;
+}
+
+.cfg-status {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.cfg-status-ok {
+  border-color: rgba(0, 255, 128, 0.25);
+}
+
+.cfg-status-err {
+  border-color: rgba(255, 0, 80, 0.25);
+}
+
+.cfg-master-preview {
+  margin-top: 0.9rem;
+  padding: 0.9rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.cfg-master-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cfg-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.cfg-chip {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.85rem;
+}
+
+.cfg-chip-muted {
+  opacity: 0.6;
+}
+
+/* ===== Habits Tab ===== */
+
+.cfg-habits-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.cfg-habits-count {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.cfg-habits-add {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  margin: 0.75rem 0 1rem;
+  flex-wrap: wrap;
+}
+
+.cfg-habits-add input {
+  flex: 1;
+  min-width: 240px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: white;
+  border-radius: 14px;
+  padding: 0.7rem 0.85rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.cfg-habits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.cfg-empty {
+  color: var(--gray-text);
+  padding: 0.75rem 0.25rem;
+}
+
+.cfg-habit-row {
+  display: grid;
+  grid-template-columns: 1.2fr auto auto;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 900px) {
+  .cfg-habit-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cfg-habit-name {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: white;
+  border-radius: 14px;
+  padding: 0.65rem 0.8rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.cfg-habit-days {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.cfg-day {
+  width: 38px;
+  height: 34px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.cfg-day-on {
+  border-color: rgba(0, 255, 128, 0.28);
+  background: rgba(0, 255, 128, 0.10);
+  color: white;
+}
+
+.cfg-habit-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cfg-danger {
+  border-color: rgba(255, 0, 80, 0.25) !important;
+}
+
+
+/* ===== Widgets Tab ===== */
+
+.cfg-widgets-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.cfg-widgets-pill {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.cfg-subtabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0.9rem 0 1rem;
+}
+
+.cfg-subtab {
+  opacity: 0.7;
+}
+
+.cfg-subtab-active {
+  opacity: 1;
+  outline: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.cfg-widgets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.cfg-widget-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.cfg-widget-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cfg-widget-title {
+  font-size: 1.05rem;
+}
+
+.cfg-widget-sub {
+  color: var(--gray-text);
+  font-size: 0.9rem;
+}
+
+.cfg-widget-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.cfg-toggle {
+  min-width: 66px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.cfg-toggle-on {
+  border-color: rgba(0, 255, 128, 0.28);
+  background: rgba(0, 255, 128, 0.10);
+}
+
+.cfg-widget-page {
+  padding: 0.25rem 0;
+}
+
+.cfg-widget-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cfg-widget-page-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.cfg-placeholder-box {
+  margin-top: 0.9rem;
+  padding: 1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--gray-text);
+}
+
+/* ===== Weekly Goals settings component ===== */
+
+.cfg-weekly-preview {
+  margin-top: 0.75rem;
+  padding: 0.9rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.cfg-weekly-preview-title {
+  margin-bottom: 0.35rem;
+}
+
+.cfg-weekly-preview-goal {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cfg-weekly-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+  margin-top: 0.9rem;
+}
+
+@media (max-width: 900px) {
+  .cfg-weekly-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cfg-input-today {
+  border-color: rgba(0, 255, 128, 0.28) !important;
+  background: rgba(0, 255, 128, 0.08) !important;
+}
+
+.cfg-note {
+  margin-top: 0.75rem;
+}
+
+.cfg-muted {
+  color: var(--gray-text);
+}
+
+/* ===== Relationships Tab ===== */
+
+.cfg-rel-shell {
+  width: 100%;
+}
+
+.cfg-rel-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.6rem;
+}
+
+.cfg-chip-on {
+  border-color: rgba(0, 255, 128, 0.28) !important;
+  background: rgba(0, 255, 128, 0.10) !important;
+  color: white !important;
+}
+
+.cfg-rel-add {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0.9rem 0 1rem;
+}
+
+.cfg-rel-add input,
+.cfg-rel-add select {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: white;
+  border-radius: 14px;
+  padding: 0.7rem 0.85rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.cfg-rel-present {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  user-select: none;
+}
+
+.cfg-rel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.cfg-rel-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr auto auto;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 1100px) {
+  .cfg-rel-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cfg-rel-row input,
+.cfg-rel-row select {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: white;
+  border-radius: 14px;
+  padding: 0.65rem 0.8rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.cfg-rel-name {
+  width: 100%;
+}
