@@ -2,15 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import './dashboard.css';
 
 import { FaRegSnowflake, FaSun, FaCloudRain, FaCloud, FaWind } from "react-icons/fa";
-import { MdInfoOutline, MdSettings } from 'react-icons/md';
+import { MdSettings } from 'react-icons/md';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 
 import Calendar from '../../components/Calendar/Calendar';
-import Phases from '../../components/Phases/Phases';
-import Fast from '../../components/Fast/Fast';
-import FastView from '../../components/FastView/FastView';
-import Daily from "../../components/Daily/Daily";
 import Clock from '../../components/Clock/Clock';
 
 import WidgetCard from '../../components/Widget/WidgetCard';
@@ -21,18 +17,6 @@ import { useMaster } from '../../state/MasterContext';
 
 const weatherAPI = process.env.REACT_APP_WEATHER_API;
 const weatherLOC = process.env.REACT_APP_WEATHER_LOC;
-
-function todayKey(date = new Date()) {
-  const day = date.getDay(); // 0 Sun, 1 Mon...
-  if (day === 0) return 'sunday';
-  if (day === 1) return 'monday';
-  if (day === 2) return 'tuesday';
-  if (day === 3) return 'wednesday';
-  if (day === 4) return 'thursday';
-  if (day === 5) return 'friday';
-  if (day === 6) return 'saturday';
-  return null;
-}
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -128,12 +112,6 @@ export default function Dashboard() {
     return Array.from(map.values());
   }, [registry, enabledIds]);
 
-  const todaysGoal = useMemo(() => {
-    const key = todayKey(currentTime);
-    if (!key) return '';
-    return (master?.weeklyGoals?.[key] || '').trim();
-  }, [master, currentTime]);
-
   return (
     <div className="dashboard-border">
       <div className="dashboard">
@@ -173,74 +151,39 @@ export default function Dashboard() {
               <Calendar />
             </div>
 
-            <div className="db-main_content_daily">
-              <h4>WEEKLY GOAL (TODAY)</h4>
-              <div className="db-main_content_daily-goal">
-                {todaysGoal ? <p>{todaysGoal}</p> : <p style={{ opacity: 0.5 }}>Set your weekly goals in Config → Widgets → Weekly Goals</p>}
-              </div>
-
-              <div className="db-main_flex ld-center-grid">
-                {centerWidgets.map(w => (
-                  <WidgetCard
-                    key={w.id}
-                    title={w.title}
-                    actions={
-                      w.modal?.id ? (
-                        <button className="ld-details-btn" onClick={() => setOpenModalId(w.modal.id)}>
-                          Details
-                        </button>
-                      ) : null
-                    }
-                  >
-                    {w.render()}
-                  </WidgetCard>
-                ))}
-              </div>
+            <div className="db-main_flex ld-center-grid" style={{ marginTop: 12 }}>
+              {centerWidgets.map(w => (
+                <WidgetCard
+                  key={w.id}
+                  title={w.title}
+                  subtitle={w.subtitle}
+                  variant={w.card?.variant || 'card'}
+                  showHeader={w.card?.showHeader !== false}
+                  className={w.card?.className || ''}
+                  actions={
+                    w.modal?.id ? (
+                      <button className="ld-details-btn" onClick={() => setOpenModalId(w.modal.id)}>
+                        Details
+                      </button>
+                    ) : null
+                  }
+                >
+                  {w.render()}
+                </WidgetCard>
+              ))}
             </div>
           </div>
         </div>
 
         <div className="db-sidebar">
-          <WidgetCard
-            title="Phases"
-            actions={<button className="ld-details-btn" onClick={() => setOpenModalId('phasesDetails')}>Details</button>}
-          >
-            <Phases />
-          </WidgetCard>
-
-          <WidgetModal
-            isOpen={openModalId === 'phasesDetails'}
-            onClose={() => setOpenModalId(null)}
-            title="Phases"
-          >
-            <div style={{ opacity: 0.85 }}>
-              You should feel (feeling during phase), however, dont let this define you! This is just a reminder that it is normal to feel like this during this time.
-            </div>
-          </WidgetModal>
-
-          <WidgetCard
-            title="Fasting"
-            right={<MdInfoOutline style={{ cursor: 'pointer' }} onClick={() => setOpenModalId('fastingDetails')} />}
-          >
-            <Fast />
-          </WidgetCard>
-
-          <WidgetModal
-            isOpen={openModalId === 'fastingDetails'}
-            onClose={() => setOpenModalId(null)}
-            title="Fasting"
-          >
-            <FastView />
-          </WidgetModal>
-
-          <WidgetCard title="Habit Tracker">
-            <Daily />
-          </WidgetCard>
-
           {rightWidgets.map(w => (
             <WidgetCard
               key={w.id}
               title={w.title}
+              subtitle={w.subtitle}
+              variant={w.card?.variant || 'card'}
+              showHeader={w.card?.showHeader !== false}
+              className={w.card?.className || ''}
               actions={
                 w.modal?.id ? (
                   <button className="ld-details-btn" onClick={() => setOpenModalId(w.modal.id)}>

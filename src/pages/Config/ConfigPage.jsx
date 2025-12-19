@@ -20,6 +20,10 @@ const TABS = [
 const WIDGETS = [
   { id: 'weeklyGoals', label: 'Weekly Goals' },
 
+  // ✅ NEW: sidebar widgets now controlled via settings
+  { id: 'fasting', label: 'Fasting' },
+  { id: 'habitTracker', label: 'Habit Tracker (Daily)' },
+
   { id: 'habitsWeekly', label: 'Habits (Weekly View)' },
   { id: 'habitsMonthly', label: 'Habits (Monthly View)' },
 
@@ -28,7 +32,6 @@ const WIDGETS = [
 
   { id: 'phases', label: 'Phases' },
 
-  // ✅ renamed
   { id: 'weight', label: 'Weight' },
 
   { id: 'sunsetWalk', label: 'Sunset Walk' },

@@ -1,66 +1,41 @@
-import React, { useState } from 'react';
-import apiRequest from '../../utils/apiRequest';
-import './daily.css'
+import React, { useMemo } from 'react';
+import { useMaster } from '../../state/MasterContext';
+import './daily.css';
 
-const AddGoal = () => {
-    const [newGoal, setNewGoal] = useState('');
-    const [goalDate, setGoalDate] = useState('');
-    const [message, setMessage] = useState('');
+function todayKey(date = new Date()) {
+  const day = date.getDay();
+  if (day === 0) return 'sunday';
+  if (day === 1) return 'monday';
+  if (day === 2) return 'tuesday';
+  if (day === 3) return 'wednesday';
+  if (day === 4) return 'thursday';
+  if (day === 5) return 'friday';
+  if (day === 6) return 'saturday';
+  return null;
+}
 
-    const handleAddGoal = async () => {
-        if (!newGoal || !goalDate) {
-            setMessage('Please provide both a goal and a date.');
-            return;
-        }
+export default function DailyGoal() {
+  const { master } = useMaster();
 
-        try {
-            // Send the new goal to the backend
-            await apiRequest('/goals/daily-goal', 'POST', {
-                date: goalDate,
-                goal: newGoal,
-            });
+  const goal = useMemo(() => {
+    const key = todayKey(new Date());
+    if (!key) return '';
+    return (master?.weeklyGoals?.[key] || '').trim();
+  }, [master]);
 
-            setMessage(`goal for ${goalDate} added.`);
-            setNewGoal('');
-            setGoalDate('');
-        } catch (error) {
-            console.error('Error adding goal:', error);
-            setMessage('Failed to add goal. Please try again.');
-        }
-    };
+  return (
+    <div className="ld-daily-goal">
+      <h4>WEEKLY GOAL (TODAY)</h4>
 
-    return (
-        <div className='daily'>
-            <h2>daily goal</h2>
-            <div className="daily-input">
-                <div>
-                    {/* <label htmlFor="goal">GOAL:</label> */}
-                    <input
-                        type="text"
-                        id="goal"
-                        value={newGoal}
-                        onChange={(e) => setNewGoal(e.target.value)}
-                        placeholder="GOAL"
-                        autoComplete="off"
-                    />
-                </div>
-                <div>
-                    {/* <label htmlFor="date">DATE:</label> */}
-                    <input
-                        type="date"
-                        id="date"
-                        value={goalDate}
-                        onChange={(e) => setGoalDate(e.target.value)}
-                    />
-                </div>
-            </div>
-
-            <button onClick={handleAddGoal}>ADD GOAL</button>
-            <p className="daily-success">
-                {message && <h1>{message}</h1>}
-            </p>
-        </div>
-    );
-};
-
-export default AddGoal;
+      <div className="db-main_content_daily-goal">
+        {goal ? (
+          <p>{goal}</p>
+        ) : (
+          <p style={{ opacity: 0.5, fontWeight: 600 }}>
+            Set your weekly goals in Config → Widgets → Weekly Goals
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}

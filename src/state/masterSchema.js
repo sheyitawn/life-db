@@ -16,7 +16,7 @@ export const DEFAULT_MASTER = {
 
   widgets: {
     enabled: {
-      // e.g. weight: true
+      // e.g. phases: true
     },
   },
 
@@ -27,6 +27,7 @@ export const DEFAULT_MASTER = {
     thursday: '',
     friday: '',
     saturday: '',
+    sunday: '',
   },
 
   habits: {
@@ -40,14 +41,21 @@ export const DEFAULT_MASTER = {
   },
 
   phases: {
-    periodDates: [],
+    settings: {
+      lastPeriodStart: '',
+      lastPeriodEnd: '',
+      cycleLengthDays: 28,
+      periodLengthDays: 5,
+
+      // ✅ NEW: allows proportional phase separators
+      ovulationLengthDays: 1,
+      lutealLengthDays: 14,
+    },
+    history: [],
   },
 
-  // ✅ Weight is now fully master-file driven
   weight: {
-    // [{ ts:'2025-12-18T16:01:12.345Z', kg: 92.4 }]
     entries: [],
-    // “Weight loss mode” + start/goal
     mode: {
       enabled: false,
       startKg: null,

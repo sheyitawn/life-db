@@ -1,25 +1,23 @@
+/* =========================
+   Shell
+========================= */
 .dashboard-border {
   border: 1.5px solid rgba(255, 255, 255, 0.3);
   margin: 3rem auto;
   padding: 0.5rem;
   border-radius: 30px;
   width: 94%;
-  height: calc(100% - 6rem); /* Adjust for top+bottom margins */
+  height: calc(100% - 6rem);
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 }
 
-
-
-
-
 .dashboard {
-  flex: 1; /* Fills remaining space in parent */
+  flex: 1;
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
-  align-items: stretch; /* Ensures even height if children are flex items */
+  align-items: stretch;
 
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -30,11 +28,9 @@
 
   padding: 2rem;
   color: white;
-
-  min-height: 0; /* Important for nested flex children */
+  min-height: 0;
   box-sizing: border-box;
 }
-
 
 @media (max-width: 768px) {
   .dashboard {
@@ -48,405 +44,165 @@
   }
 }
 
-
-/* main */
+/* =========================
+   Layout
+========================= */
 .db-main {
-    flex: 6;
+  flex: 8;
+}
+
+.db-sidebar {
+  flex: 2;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  font-size: 0.7em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 .db-main_flex {
   display: flex;
-  flex-wrap: wrap; /* allow wrapping to next line */
-  gap: 1rem;        /* optional spacing between items */
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
 }
 
-/* .db-main_flex > * {
-  flex: 1 1 200px;
-  min-width: 150px;
-} */
-
-
-.db-sidebar {
-    flex: 2;
-
-}
-
-.db-main_header {
-
-}
-
-
-
-.db-info {
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    gap: 1.5rem;
-
-}
-
-
-.db-info a {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: .9rem;
-    text-emphasis: none;
-    text-decoration: none;
-}
-
-.db-info a .db_weather-temp {
-
-    font-size: .6em;
-}
-
-
-.digital-clock {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 2em;
-  color: #ff4444; /* optional red style */
-  letter-spacing: 2px;
-}
-
-.db-info a {
-    font-size: 1.5em;
-    margin-top: .3rem;
-    color: white;
-}
-
-.db-info h2 {
-    font-weight: normal;
-    width: 11rem;
-    margin: 0;
-}
-
-.db-greeting {
-    margin: 0;
-
-}
-
-.db-greeting h1 {
-    font-size: 3em;
-    font-weight: normal;
-    margin: 0;
-}
-
-.db-greeting h3 {
-    /* font-size: 3em; */
-    font-weight: normal;
-}
-
-.db-greeting h3 b{
-    /* font-size: 3em; */
-    font-weight: b;
-    margin: 0;
-    cursor: pointer;
-}
-
-.db-main_content {
-    display: flex;
-    margin: 3rem 0;
-    gap: 1rem;
-    height: 55vh;
-    max-height: 55vh;
-
-}
-
-.db-main_content_timeline {
-    flex: 1;
-
-}
-
-.db-main_content_daily {
-    display: flex;
-    flex-direction: column;
-    flex: 3;
-    /* background-color: var(--box); */
-    border-radius: 30px;
-    height: 100%;
-    padding-left: 2rem;
-    /* gap: 3rem; */
-    height: 100%;
-}
-
-
-.db-main_content_daily .db-main_content_daily-goal {
-    margin: .5rem 0;
-}
-
-.db-main_content_daily h4 {
-    margin: .6rem 0;
-    color: var(--gray-text);
-    font-size: .8em;
-}
-
-.db-main_content_daily p {
-    font-weight: bold;
-    font-size: 2em;
-    margin: 0;
-    cursor: pointer;
-}
-
-.db-main_flex {
-    display: flex;
-    align-items:center;
-    justify-content:flex-start;
-    gap: 1rem;
-
-}
-
-/* .db-main_flex > *{
-    height: 30rem;
-
-} */
-
-/* .db-main_flex :nth-child(1) {
-    flex: 4;
-}
-.db-main_flex :nth-child(2) {
-    flex: 1;
-} */
-/* .db-main_flex :nth-child(1) {
-    flex: 1;
-
-} */
-
-
-
-/* sidebar */
-
-.db-sidebar {
-    margin-left: 2rem;
-    font-size: 0.7em;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-}
-
-.db-sidebar_phases {
-    margin-bottom: .5rem;
-}
-
-.db-sidebar_fast {
-    background-color: var(--box);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-
-    border-radius: 45px;
-    padding: .6rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.db-sidebar_activity {
-    text-align: right;
-
-}
-
-.db-sidebar_activity_box {
-    text-align: center;
-
-    background: var(--box);
-    /* background: linear-gradient(187deg, rgb(36, 98, 122) 26%, rgba(50, 63, 107, 1) 100%); */
-    border-radius: 15px;
-    padding: .6rem 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    margin: 1rem 0 .5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-
-
-}
-
-.db-sidebar_activity_header {
-    font-weight: bold;
-    font-size: 1em;
-    margin: 0;
-
-
-}
-
-.db-sidebar_activity_content {
-    font-size: 1.5em;
-    font-weight: bold;
-    margin: 0;
-}
-
-.db-sidebar_activity_content p {
-
-    margin: 0.5rem;
-}
-
-.db-sidebar_daily {
-    text-align: center;
-
-}
-
-.db-sidebar_daily_box {
-    text-align: left;
-    border-radius: 15px;
-    /* padding: 1rem; */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    /* align-items: center; */
-    margin: .5rem 0 .5rem;
-    background-color: var(--box);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-
-
-}
-.db-sidebar_relationships {
-    text-align: right;
-
-}
-
-.db-sidebar_relationships_box {
-    text-align: center;
-    border-radius: 30px;
-    /* padding: 1rem; */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    /* align-items: center; */
-    margin: .5rem 0 .5rem;
-
-}
-
-.db-sidebar_relationships_header {
-    font-weight: bold;
-    font-size: 1em;
-
-}
-
-.db-sidebar_daily_header {
-    font-weight: bold;
-    font-size: 1em;
-
-}
-
-.db-sidebar_relationships_relations {
-    margin-top: .5rem;
-    display: flex;
-    flex-direction: column;
-    /* align-items: center; */
-    gap: 1rem;
-    
-}
-
-.db-sidebar_relationships_relation {
-    height: 2.1rem;
-    display: flex;
-    align-items: center;
-    background-color: var(--box);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-
-    border-radius: 45px;
-    /* margin: .5rem 0; */
-    /* justify-content: space-between; */
-    padding: 0 1rem;
-    font-weight: bold;
-}
-
-.db-sidebar_relationships_relation_content {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
-    flex: 5;
-    margin: 0 1rem;
-    
-}
-
-.db-sidebar_relationships_relation_content_progress {
-    position: relative;
-    width: 100%;
-    height: 5px;
-    border-radius: 5px;
-    overflow: hidden;
-    background-color: black;
-    margin: .3rem;
-}
-
-.db-sidebar_relationships_relation_content_progress-bar {
-    height: 100%;
-    transition: width 0.3s ease-in-out;
-    border-radius: 5px;
-    margin-bottom: 1rem;
-
-} 
-
-.db-sidebar_ideas {
-    text-align: right;
-}
-
-.db-sidebar_ideas_box {
-    text-align: center;
-    border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: .5rem 0 .5rem;
-    background-color: var(--box);
-    width: 10rem;
-}
-
-.db-sidebar_ideas_box h2{
-    font-size: 2.5em;
-    margin: 0;
-}
-
-.db-sidebar_ideas_box p {
-    margin: 0;
-    margin: .3rem;
-
-    font-size: .8em;
-    color: var(--gray-text);
-
-} 
-
-.db-sidebar_ideas_box_content { 
-    font-size: .9em;
-    font-weight: bold;
-}
-
-.db-sidebar-button {
-    cursor: pointer;
-    text-align: right;
-}
-
-.db-sidebar-button:hover{
-    font-weight: bold;
-}
-
-/* Standard button used in widget headers */
-.ld-details-btn{
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 999px;
-  padding: .35rem .65rem;
-  color: rgba(255,255,255,0.9);
-  cursor: pointer;
-  font-size: .85em;
-}
-
-.ld-details-btn:hover{
-  background: rgba(255,255,255,0.12);
-}
-
-/* Center widgets spacing that matches your current look */
-.ld-center-grid{
+/* Center widgets spacing */
+.ld-center-grid {
   gap: 1rem;
   flex-wrap: wrap;
 }
 
-/* Make widgets in sidebar consistent spacing */
-.db-sidebar .ld-widget{
-  margin: .45rem 0;
+/* Keep sidebar widgets consistent */
+.db-sidebar .ld-widget {
+  margin: 0.45rem 0;
+}
+
+/* =========================
+   Header
+========================= */
+.db-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
+}
+
+.db-info h2 {
+  font-weight: normal;
+  width: 11rem;
+  margin: 0;
+}
+
+.db-info a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  text-decoration: none;
+  color: white;
+  font-size: 1.5em;
+  margin-top: 0.3rem;
+}
+
+.db-info a .db_weather-temp {
+  font-size: 0.6em;
+}
+
+.digital-clock {
+  font-family: "Orbitron", sans-serif;
+  font-size: 2em;
+  color: #ff4444;
+  letter-spacing: 2px;
+}
+
+.db-greeting {
+  margin: 0;
+}
+
+.db-greeting h1 {
+  font-size: 3em;
+  font-weight: normal;
+  margin: 0;
+}
+
+.db-greeting h3 {
+  font-weight: normal;
+}
+
+.db-greeting h3 b {
+  font-weight: b;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* =========================
+   Main content
+========================= */
+.db-main_content {
+  display: flex;
+  margin: 3rem 0;
+  gap: 1rem;
+  height: 55vh;
+  max-height: 55vh;
+}
+
+.db-main_content_timeline {
+  flex: 2;
+}
+
+.db-main_flex {
+  flex: 6;
+}
+
+/* =========================
+   Daily goal (plain widget styling)
+========================= */
+.ld-daily-goal h4 {
+  margin: 0.6rem 0;
+  color: var(--gray-text);
+  font-size: 0.8em;
+}
+
+.ld-daily-goal .db-main_content_daily-goal {
+  margin: 0.5rem 0;
+}
+
+.ld-daily-goal p {
+  font-weight: bold;
+  font-size: 2em;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* =========================
+   Small helpers / buttons
+========================= */
+.ld-details-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  font-size: 0.85em;
+}
+
+.ld-details-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* =========================
+   Full-width widgets
+========================= */
+.ld-widget--full {
+  width: 100%;
+  flex-basis: 100%;
+}
+
+
+.db-sidebar_phases {
+  margin-bottom: 0.5rem;
 }

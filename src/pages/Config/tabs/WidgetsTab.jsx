@@ -2,6 +2,7 @@
 import React from 'react';
 import WeeklyGoalsSettings from '../widgets/WeeklyGoalsSettings';
 import WeightSettings from '../widgets/WeightSettings';
+import PhasesSettings from '../widgets/PhasesSettings';
 import { useMaster } from '../../../state/MasterContext';
 
 export default function WidgetsTab({ widgets, enabledWidgets, enabledWidgetIds, widgetsSubPage, setWidgetsSubPage }) {
@@ -30,6 +31,8 @@ export default function WidgetsTab({ widgets, enabledWidgets, enabledWidgetIds, 
     const widget = widgets.find(w => w.id === widgetId);
     if (!widget) return null;
 
+    const enabled = !!enabledWidgets?.[widgetId];
+
     return (
       <div className="cfg-widget-page">
         <div className="cfg-widget-page-header">
@@ -56,6 +59,44 @@ export default function WidgetsTab({ widgets, enabledWidgets, enabledWidgetIds, 
                   mode: nextMode,
                 },
               }))
+            }
+          />
+        ) : widgetId === 'phases' ? (
+          <PhasesSettings
+            master={master}
+            enabled={enabled}
+            onChangeSettings={(nextSettings) =>
+              actions.updateMaster(prev => ({
+                ...prev,
+                phases: {
+                  ...prev.phases,
+                  settings: nextSettings,
+                },
+              }))
+            }
+            onRecord={() =>
+              actions.updateMaster(prev => {
+                const enabledNow = !!(prev.widgets?.enabled || {})?.phases;
+                if (!enabledNow) return prev;
+
+                const start = prev.phases?.settings?.lastPeriodStart || '';
+                const end = prev.phases?.settings?.lastPeriodEnd || '';
+
+                if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || !/^\d{4}-\d{2}-\d{2}$/.test(end)) {
+                  return prev;
+                }
+
+                const nextHistory = Array.isArray(prev.phases?.history) ? [...prev.phases.history] : [];
+                nextHistory.push({ start, end, recordedAt: new Date().toISOString() });
+
+                return {
+                  ...prev,
+                  phases: {
+                    ...prev.phases,
+                    history: nextHistory,
+                  },
+                };
+              })
             }
           />
         ) : (

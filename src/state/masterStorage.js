@@ -1,5 +1,4 @@
 // src/state/masterStorage.js
-
 import { DEFAULT_MASTER, SCHEMA_VERSION } from './masterSchema';
 
 export const MASTER_LS_KEY = 'lifeDashboard:master';
@@ -38,6 +37,39 @@ function normalizeWeightEntries(entries) {
     })
     .filter(Boolean)
     .sort((a, b) => new Date(a.ts) - new Date(b.ts));
+}
+
+function normalizeYmd(s) {
+  if (typeof s !== 'string') return '';
+  const t = s.trim();
+  return /^\d{4}-\d{2}-\d{2}$/.test(t) ? t : '';
+}
+
+function normalizePhasesHistory(hist) {
+  const arr = Array.isArray(hist) ? hist : [];
+  return arr
+    .filter(Boolean)
+    .map((h) => {
+      const start = normalizeYmd(h.start);
+      const end = normalizeYmd(h.end);
+      const recordedAt = typeof h.recordedAt === 'string' ? h.recordedAt : new Date().toISOString();
+      if (!start || !end) return null;
+
+      const a = new Date(start);
+      const b = new Date(end);
+      if (Number.isNaN(a.getTime()) || Number.isNaN(b.getTime())) return null;
+      if (b < a) return null;
+
+      return { start, end, recordedAt };
+    })
+    .filter(Boolean)
+    .sort((a, b) => new Date(a.start) - new Date(b.start));
+}
+
+function clampInt(n, min, max, fallback) {
+  if (!isFiniteNumber(n)) return fallback;
+  const v = Math.round(n);
+  return Math.max(min, Math.min(max, v));
 }
 
 // minimal normalization so imports don’t crash your UI
@@ -83,21 +115,52 @@ export function normalizeMaster(raw) {
   out.relationships = isPlainObject(out.relationships) ? out.relationships : base.relationships;
   out.relationships.list = Array.isArray(out.relationships.list) ? out.relationships.list : [];
 
-  // ✅ weight (new structure)
-  out.weight = isPlainObject(out.weight) ? out.weight : base.weight;
+  // ✅ phases
+  out.phases = isPlainObject(out.phases) ? out.phases : base.phases;
+  out.phases.settings = isPlainObject(out.phases.settings) ? out.phases.settings : base.phases.settings;
 
-  // compat: if someone had old "entries" as {date, weight} from backend export,
-  // we still accept it via normalizeWeightEntries (it also accepts e.weight)
+  out.phases.settings.lastPeriodStart = normalizeYmd(out.phases.settings.lastPeriodStart);
+  out.phases.settings.lastPeriodEnd = normalizeYmd(out.phases.settings.lastPeriodEnd);
+
+  out.phases.settings.cycleLengthDays = clampInt(out.phases.settings.cycleLengthDays, 10, 60, base.phases.settings.cycleLengthDays);
+  out.phases.settings.periodLengthDays = clampInt(out.phases.settings.periodLengthDays, 1, 14, base.phases.settings.periodLengthDays);
+
+  // ✅ NEW: ovulation/luteal
+  out.phases.settings.ovulationLengthDays = clampInt(
+    out.phases.settings.ovulationLengthDays,
+    1,
+    5,
+    base.phases.settings.ovulationLengthDays
+  );
+
+  out.phases.settings.lutealLengthDays = clampInt(
+    out.phases.settings.lutealLengthDays,
+    7,
+    18,
+    base.phases.settings.lutealLengthDays
+  );
+
+  // keep sum <= cycle (ensure follicular has at least 1 day)
+  const cycle = out.phases.settings.cycleLengthDays;
+  const fixed = out.phases.settings.periodLengthDays + out.phases.settings.ovulationLengthDays + out.phases.settings.lutealLengthDays;
+  if (fixed >= cycle) {
+    // shrink luteal first to make room
+    const maxLuteal = Math.max(7, cycle - (out.phases.settings.periodLengthDays + out.phases.settings.ovulationLengthDays + 1));
+    out.phases.settings.lutealLengthDays = Math.min(out.phases.settings.lutealLengthDays, maxLuteal);
+  }
+
+  out.phases.history = normalizePhasesHistory(out.phases.history);
+
+  // ✅ weight
+  out.weight = isPlainObject(out.weight) ? out.weight : base.weight;
   out.weight.entries = normalizeWeightEntries(out.weight.entries);
 
   out.weight.mode = isPlainObject(out.weight.mode) ? out.weight.mode : base.weight.mode;
   out.weight.mode.enabled = !!out.weight.mode.enabled;
-
   out.weight.mode.startKg = isFiniteNumber(out.weight.mode.startKg) ? out.weight.mode.startKg : null;
   out.weight.mode.goalKg = isFiniteNumber(out.weight.mode.goalKg) ? out.weight.mode.goalKg : null;
 
-  // phases + other
-  out.phases = isPlainObject(out.phases) ? out.phases : base.phases;
+  // other
   out.other = isPlainObject(out.other) ? out.other : base.other;
 
   return out;
