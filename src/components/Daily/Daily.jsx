@@ -1,85 +1,81 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import './Daily.css';
-import { FaPen } from 'react-icons/fa';
-import apiRequest from '../../utils/apiRequest';
+
+import { useMaster } from '../../state/MasterContext';
+import {
+  normalizeHabits,
+  ymdLocal,
+  parseYmdToLocalDate,
+  isHabitScheduledOnDate,
+  getDoneForDate,
+  toggleDoneForDate,
+} from '../../utils/habitsLocal';
 
 function Daily() {
-  const [habits, setHabits] = useState({});
-  
-  const [loading, setLoading] = useState(true);
+  const { master, updateMaster } = useMaster();
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = ymdLocal(new Date());
+  const todayDateObj = useMemo(() => parseYmdToLocalDate(today), [today]);
 
-  useEffect(() => {
-    const fetchHabits = async () => {
-      try {
-        const data = await apiRequest('/habits');
-        setHabits(data.habits); // ✅ FIX: data.habits already contains the habit object
-        setLoading(false);
-      } catch (error) {
-        console.error('Failed to load habits:', error);
-        setLoading(false);
-      }
-    };
+  const habits = useMemo(() => {
+    const raw = master?.habits?.list || [];
+    const normalized = normalizeHabits(raw);
+    return normalized.filter(h => isHabitScheduledOnDate(h, todayDateObj));
+  }, [master, todayDateObj]);
 
-    fetchHabits();
-  }, []);
+  const records = master?.habits?.records || [];
 
-  const completedCount = Object.values(habits).filter(Boolean).length;
-  const habitKeys = Object.keys(habits);
-  const progress = habitKeys.length
-    ? Math.round((completedCount / habitKeys.length) * 100)
-    : 0;
+  const completedCount = habits.filter(h => getDoneForDate(records, today, h.id)).length;
+  const progress = habits.length ? Math.round((completedCount / habits.length) * 100) : 0;
 
-  const toggleHabit = async (habitKey) => {
-    try {
-      const response = await apiRequest('/habits/toggle', 'POST', {
-        date: today,
-        habitKey,
-      });
-      setHabits(response.habits); // ✅ FIX: no double `.habits.habits`
-    } catch (error) {
-      console.error('Failed to toggle habit:', error);
-    }
+  const toggleHabit = (habitId) => {
+    updateMaster(prev => {
+      const m = structuredClone(prev);
+      m.habits = m.habits || {};
+      m.habits.records = Array.isArray(m.habits.records) ? m.habits.records : [];
+
+      const { next } = toggleDoneForDate(m.habits.records, today, habitId);
+      m.habits.records = next;
+
+      return m;
+    });
   };
 
   return (
     <div className="daily-card">
       <div className="daily-header">
         <h4>daily</h4>
+
         <div className="daily-header-icons">
-          <div
-            className="daily-progress-circle"
-            style={{ '--value': progress }}
-          >
+          <div className="daily-progress-circle" style={{ '--value': progress }}>
             <div className="daily-progress-circle_center">
               <span>{progress}%</span>
             </div>
           </div>
-
-          {/* <button className="daily-edit">
-            <FaPen size={12} />
-          </button> */}
         </div>
       </div>
 
-      {loading ? (
-        <p className="card-subtle">Loading habits...</p>
+      {!habits.length ? (
+        <p className="card-subtle" style={{ opacity: 0.7 }}>
+          No habits scheduled for today. Add habits in <b>Config → Habits</b>.
+        </p>
       ) : (
         <ul className="daily-goals">
-          {Object.entries(habits).map(([key, completed]) => (
-            <li key={key} className={`goal-item ${completed ? 'done' : ''}`}>
-              <input
-                type="checkbox"
-                checked={completed}
-                onChange={() => toggleHabit(key)}
-              />
-              <span>{key}</span>
-            </li>
-          ))}
+          {habits.map((h) => {
+            const done = getDoneForDate(records, today, h.id);
+            return (
+              <li key={h.id} className={`goal-item ${done ? 'done' : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={done}
+                  onChange={() => toggleHabit(h.id)}
+                />
+                <span>{h.label}</span>
+              </li>
+            );
+          })}
         </ul>
       )}
-      
     </div>
   );
 }

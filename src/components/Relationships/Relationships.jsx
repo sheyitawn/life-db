@@ -1,116 +1,62 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import apiRequest from '../../utils/apiRequest';
-import { toast } from 'react-toastify';
-import './relationships.css'
+import React, { useMemo } from 'react';
+import './relationships.css';
 import { MdInfoOutline } from 'react-icons/md';
 
-const RelationshipView = () => {
-    const [relationships, setRelationships] = useState([]);
+import { useMaster } from '../../state/MasterContext';
+import { normalizeRelationships, computeCheckinMeta } from '../../utils/relationshipsLocal';
 
+export default function Relationships() {
+  const { master } = useMaster();
 
-    // Handle check-in action
-    const handleCheckIn = async (id) => {
-        try {
-            await apiRequest(`/relationships/relationships/${id}`, 'POST', { action: 'check-in' });
-            // Refresh relationships after check-in
-            const response = await apiRequest('/relationships/relationships');
-            setRelationships(response);
-            
-            toast(`Checked in with ${relationships[id]}`)
-            console.log("🚀 ~ handleCheckIn ~ relationships:", relationships[id])
+  const enabled = master?.widgets?.enabled || {};
+  const checkinsEnabled = !!enabled.relationshipsCheckin;
 
-        } catch (error) {
-            console.error('Error updating relationship:', error);
-        }
-    };
+  const rawList = master?.relationships?.list || [];
 
-    // Handle skip action
-    const handleSkip = async (id) => {
-        try {
-            await apiRequest(`/relationships/relationships/${id}`, 'POST', { action: 'skip' });
-            // Refresh relationships after skip
-            const response = await apiRequest('/relationships/relationships');
-            setRelationships(response);
-            toast("skipped. next call in 2 days.")
-        } catch (error) {
-            console.error('Error skipping relationship:', error);
-        }
-    };
-    
+  const list = useMemo(
+    () => normalizeRelationships(rawList),
+    [rawList]
+  );
 
-    const fetchAllRelationships = async () => {
-        try {
-            const response = await apiRequest('/relationships/relationships');
-            setRelationships(response);
+  const mostDue = useMemo(() => {
+    const withMeta = list.map(r => ({ ...r, ...computeCheckinMeta(r) }));
 
-            // // Pass the most due relationships to the parent
-            // if (setRelationships) {
-            //     setRelationships(response);
-            // }
-        } catch (error) {
-            console.error('Error fetching most due relationships:', error);
-        }
-    };
+    return withMeta
+      .sort((a, b) => {
+        if (a.overdue !== b.overdue) return a.overdue ? -1 : 1;
+        return a.dueInDays - b.dueInDays;
+      })
+      .slice(0, 5);
+  }, [list]);
 
-    const fetchMostDueRelationships = async () => {
-        console.error('fetching');
+  if (!checkinsEnabled) return null;
+  if (mostDue.length === 0) return null;
 
-        try {
-            const response = await apiRequest('/relationships/most-due');
-            // setLocalRelationships(response);
-
-            // Pass the most due relationships to the parent
-            if (setRelationships) {
-                setRelationships(response);
-            }
-        } catch (error) {
-            console.error('Error fetching most due relationships:', error);
-        }
-    };
-
-
-    // useImperativeHandle(ref, () => ({
-    //     fetchMostDueRelationships,
-    // }));
-
-    useEffect(() => {
-
-
-        fetchMostDueRelationships();
-        // fetchAllRelationships()
-    }, [setRelationships]);
-
-    return (
-        <div className="relationships">
-            <div className="relationships_box">
-                {/* <h1 className="relationships_header">relationships</h1> */}
-                <div className="relationships_relations">
-                    {relationships.map((relationship) => (
-                  <div key={relationship.id} className="relationships_relation">
-                    <div className="relationships_relation_content">
-                      {relationship.name}
-                      {/* <p>
-                        {relationship.daysLeft > 0
-                          ? `Next call in ${relationship.daysLeft} day(s)`
-                          : 'Overdue! Call now.'}
-                      </p> */}
-                      <div className="relationships_relation_content_progress">
-                        <div
-                          className="relationships_relation_content_progress-bar"
-                          style={{
-                            width: `${relationship.progress * 100}%`,
-                            background: relationship.overdue ? '#C62915' : '#15BAC6', // Red if overdue
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <MdInfoOutline />
-                  </div>
-                ))}
+  return (
+    <div className="relationships">
+      <div className="relationships_box">
+        <div className="relationships_relations">
+          {mostDue.map((r) => (
+            <div key={r.id} className="relationships_relation">
+              <div className="relationships_relation_content">
+                {r.name}
+                <div className="relationships_relation_content_progress">
+                  <div
+                    className="relationships_relation_content_progress-bar"
+                    style={{
+                      width: `${Math.max(0, Math.min(1, r.progress)) * 100}%`,
+                      background: r.overdue ? '#C62915' : '#15BAC6',
+                    }}
+                  />
                 </div>
+              </div>
+              <MdInfoOutline
+                title={r.overdue ? 'Overdue' : `Due in ${r.dueInDays} day(s)`}
+              />
             </div>
+          ))}
         </div>
-    );
-};
-
-export default RelationshipView;
+      </div>
+    </div>
+  );
+}

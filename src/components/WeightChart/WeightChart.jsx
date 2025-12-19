@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -11,11 +10,12 @@ import {
   Legend,
 } from "recharts";
 
-import apiRequest from "../../utils/apiRequest";
 import "./weightchart.css";
 import add from 'date-fns/add';
 import format from 'date-fns/format';
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
+
+import { useMaster } from "../../state/MasterContext";
 
 // Format timestamps to "dd/MMM" like "25/Jul"
 const dateFormatter = (timestamp) => format(new Date(timestamp), "dd/MMM");
@@ -32,38 +32,58 @@ const getTicks = (startDate, endDate, numTicks) => {
 };
 
 const WeightChart = () => {
-  const [weights, setWeights] = useState([]);
-  // Special points as timestamps
-  const specialPoints = [
-    { date: new Date(2025, 6, 18).getTime(), weight: 101 }, // July 25, 2018
-    { date: new Date(2025, 10, 10).getTime(), weight: 85 },  // Nov 10, 2025
-  ];
+  const { master } = useMaster();
+  const entries = master?.weight?.entries || [];
+  const mode = master?.weight?.mode || { enabled: false, startKg: null, goalKg: null };
 
-  useEffect(() => {
-    async function fetchWeights() {
-      const data = await apiRequest("/weighin");
+  const weights = useMemo(() => {
+    return (Array.isArray(entries) ? entries : [])
+      .map(e => ({ date: new Date(e.ts).getTime(), weight: e.kg }))
+      .filter(d => Number.isFinite(d.date) && Number.isFinite(d.weight))
+      .sort((a, b) => a.date - b.date);
+  }, [entries]);
 
-      // Normalize API dates to timestamps:
-      const normalized = data
-        .map(({ date, weight }) => {
-          // Parse date string into Date object; adjust format if needed here
-          // [Unverified] Assuming ISO or parseable format
-          const parsedDate = new Date(date);
-          return { date: parsedDate.getTime(), weight };
-        })
-        .sort((a, b) => a.date - b.date);
+  const specialPoints = useMemo(() => {
+    // Show start/goal only if weight loss mode is enabled and values exist
+    if (!mode.enabled) return [];
 
-      setWeights(normalized);
+    const pts = [];
+    const now = new Date();
+
+    if (typeof mode.startKg === 'number' && Number.isFinite(mode.startKg)) {
+      // Use first weigh-in date if available, otherwise today
+      const startDate = weights.length ? new Date(weights[0].date) : now;
+      pts.push({ date: startDate.getTime(), weight: mode.startKg });
     }
 
-    fetchWeights();
-  }, []);
+    if (typeof mode.goalKg === 'number' && Number.isFinite(mode.goalKg)) {
+      // Place goal at last weigh-in date if available, otherwise today
+      const goalDate = weights.length ? new Date(weights[weights.length - 1].date) : now;
+      pts.push({ date: goalDate.getTime(), weight: mode.goalKg });
+    }
 
-  // Determine date range for ticks (earliest and latest date between data and special points)
-  const allDates = [...weights.map(d => d.date), ...specialPoints.map(d => d.date)];
+    return pts;
+  }, [mode.enabled, mode.startKg, mode.goalKg, weights]);
+
+  const allDates = useMemo(() => {
+    const d = [];
+    weights.forEach(x => d.push(x.date));
+    specialPoints.forEach(x => d.push(x.date));
+    return d;
+  }, [weights, specialPoints]);
+
+  if (weights.length === 0) {
+    return (
+      <div className="weight-chart">
+        <h3>📈 Weight Tracker</h3>
+        <div style={{ opacity: 0.7 }}>No data yet. Log a weigh-in to see your chart.</div>
+      </div>
+    );
+  }
+
   const minDate = new Date(Math.min(...allDates));
   const maxDate = new Date(Math.max(...allDates));
-  const ticks = getTicks(minDate, maxDate, 6); // 6 ticks on x-axis
+  const ticks = getTicks(minDate, maxDate, 6);
 
   return (
     <div className="weight-chart">
@@ -84,30 +104,28 @@ const WeightChart = () => {
           <Tooltip labelFormatter={(val) => dateFormatter(val)} />
           <Legend verticalAlign="top" height={36} />
 
-          {/* Original weights line */}
           <Line
             type="monotone"
             data={weights}
             dataKey="weight"
-            stroke="#4caf50"
             strokeWidth={2}
             dot={{ r: 4 }}
             name="Weight (kg)"
             connectNulls={false}
           />
 
-          {/* Special points line with isolated points */}
-          <Line
-            type="monotone"
-            data={specialPoints}
-            dataKey="weight"
-            stroke="#ff5722"
-            strokeWidth={3}
-            dot={{ r: 6 }}
-            name="Special Points"
-            isAnimationActive={false}
-            connectNulls={false}
-          />
+          {specialPoints.length > 0 && (
+            <Line
+              type="monotone"
+              data={specialPoints}
+              dataKey="weight"
+              strokeWidth={3}
+              dot={{ r: 6 }}
+              name="Start/Goal"
+              isAnimationActive={false}
+              connectNulls={false}
+            />
+          )}
         </LineChart>
       </ResponsiveContainer>
     </div>

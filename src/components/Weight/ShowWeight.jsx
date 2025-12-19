@@ -1,75 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { IoScaleSharp } from 'react-icons/io5';
-import { IoEyeSharp, IoEyeOffSharp } from 'react-icons/io5';
+import React, { useEffect, useMemo, useState } from 'react';
+import { IoScaleSharp, IoEyeSharp, IoEyeOffSharp } from 'react-icons/io5';
+import { useMaster } from '../../state/MasterContext';
+import { formatTimeAgo, getLatestEntry } from '../../utils/weightLocal';
 
 const ShowWeight = ({ onClick }) => {
-  const [weightData, setWeightData] = useState(null);
+  const { master } = useMaster();
+  const entries = master?.weight?.entries || [];
+
+  const latest = useMemo(() => getLatestEntry(entries), [entries]);
+
   const [timeAgo, setTimeAgo] = useState('');
   const [showWeight, setShowWeight] = useState(true);
 
   useEffect(() => {
-    const fetchWeight = async () => {
-      try {
-        const res = await fetch('http://localhost:3001/weighin/latest');
-        const data = await res.json();
-        setWeightData(data);
-      } catch (err) {
-        console.error('Failed to fetch latest weight:', err);
-      }
-    };
+    if (!latest?.ts) return;
 
-    fetchWeight();
-  }, []);
+    const update = () => setTimeAgo(formatTimeAgo(latest.ts));
+    update();
 
-  // ⏳ Update timeAgo every minute
-  useEffect(() => {
-    if (!weightData?.date) return;
-
-    const updateTimeAgo = () => {
-      const timestamp = new Date(weightData.date).getTime();
-      const now = new Date().getTime();
-      const diffMs = now - timestamp;
-      const diffMinutes = Math.floor(diffMs / (1000 * 60));
-
-      let result = '';
-      if (diffMinutes < 1) {
-        result = 'just now';
-      } else if (diffMinutes < 60) {
-        result = `${diffMinutes} min ago`;
-      } else {
-        const hours = Math.floor(diffMinutes / 60);
-        const mins = diffMinutes % 60;
-        result = `${hours}h ${mins}m ago`;
-      }
-
-      setTimeAgo(result);
-    };
-
-    updateTimeAgo();
-    const interval = setInterval(updateTimeAgo, 60 * 1000); // every minute
-
+    const interval = setInterval(update, 60 * 1000);
     return () => clearInterval(interval);
-  }, [weightData]);
+  }, [latest?.ts]);
 
   return (
     <div className="weight-card glass-card">
-      {weightData ? (
+      {latest ? (
         <>
           <div className="weight-card-top">
             <span className="weight-card-weight">
-              {showWeight ? weightData.weight : '**'}
+              {showWeight ? latest.kg : '**'}
             </span>
             <span className="weight-card-unit">kg</span>
-            <button onClick={() => setShowWeight(!showWeight)}>
+            <button onClick={() => setShowWeight(!showWeight)} type="button">
               {showWeight ? <IoEyeOffSharp /> : <IoEyeSharp />}
             </button>
           </div>
+
           <div className="weight-card-label">Body weight</div>
           <div className="weight-card-time">{timeAgo}</div>
-          <button onClick={onClick}><IoScaleSharp /> Log Weight</button>
+
+          <button onClick={onClick} type="button">
+            <IoScaleSharp /> Log Weight
+          </button>
         </>
       ) : (
-        <p>Loading...</p>
+        <>
+          <div style={{ opacity: 0.8, marginBottom: 8 }}>No weigh-ins yet</div>
+          <button onClick={onClick} type="button">
+            <IoScaleSharp /> Log First Weight
+          </button>
+        </>
       )}
     </div>
   );

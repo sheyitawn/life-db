@@ -1,53 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import Habit from '../Habit/Habit'; // Adjust the path as needed
-import apiRequest from '../../utils/apiRequest';
-import HabitMonthView from '../HabitView/HabitMonthView';
+// src/components/HabitTracker/HabitTracker.jsx
+import React, { useMemo } from 'react';
+import Habit from '../Habit/Habit';
+import { useMaster } from '../../state/MasterContext';
 
-const HABIT_ICONS = {
-  water_1l: '📚',
-  outdoor_walk_30m: '🧘‍♂️',
-  treadmill_30m: '🚶‍♂️',
-  meal_prep: '🏋️‍♀️',
-  weigh_in: '⚖️',
-};
+import {
+  normalizeHabits,
+  lastNDays,
+  parseYmdToLocalDate,
+  isHabitScheduledOnDate,
+  getDoneForDate,
+  toggleDoneForDate,
+} from '../../utils/habitsLocal';
 
-const HabitTracker = () => {
-  const [habitData, setHabitData] = useState([]);
-  const [habitKeys, setHabitKeys] = useState([]);
+export default function HabitTracker() {
+  const { master, actions } = useMaster();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await apiRequest('/habits/weekly');
-      setHabitData(data);
+  const habits = useMemo(() => normalizeHabits(master?.habits?.list || []), [master]);
+  const records = master?.habits?.records || [];
+  const dates = useMemo(() => lastNDays(7), []);
 
-      if (data.length > 0) {
-        const keys = Object.keys(data[0].habits);
-        setHabitKeys(keys);
-      }
-    };
+  const toggleForDate = (habitId, dateStr) => {
+    actions.updateMaster(prev => {
+      const prevRecords = prev?.habits?.records || [];
+      const { next } = toggleDoneForDate(prevRecords, dateStr, habitId);
 
-    fetchData();
-  }, []);
+      return {
+        ...prev,
+        habits: {
+          ...prev.habits,
+          records: next,
+        },
+      };
+    });
+  };
+
+  const historyFor = (habitId) => {
+    return dates.map(dateStr => ({
+      date: dateStr,
+      done: getDoneForDate(records, dateStr, habitId),
+    }));
+  };
 
   return (
-    <div style={{ padding: '1rem', background: '#121212', minHeight: '100vh', color: 'white' }}>
-                  <HabitMonthView />
-      
-      <h2 style={{ marginBottom: '1rem' }}>📅 Weekly Habit Tracker</h2>
-      {habitKeys.map((key) => (
-        <Habit
-          key={key}
-          habitKey={key}
-          label={key.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
-          icon={HABIT_ICONS[key] || '✅'}
-          history={habitData.map((entry) => ({
-            date: entry.date,
-            done: entry.habits[key] || false,
-          }))}
-        />
-      ))}
+    <div>
+      {habits.length === 0 ? (
+        <div className="cfg-empty">No habits configured. Add them in Config → Habits.</div>
+      ) : (
+        habits.map(h => (
+          <Habit
+            key={h.id}
+            habitKey={h.id}
+            label={h.label}
+            history={historyFor(h.id)}
+            onToggleDate={(dateStr) => toggleForDate(h.id, dateStr)}
+            // If your Habit component expects extra props, keep them here
+          />
+        ))
+      )}
+
+      {/* NOTE: Monthly view is now its own dashboard widget, so it doesn't need to be embedded here */}
     </div>
   );
-};
-
-export default HabitTracker;
+}

@@ -1,47 +1,49 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import './habitview.css';
-import apiRequest from '../../utils/apiRequest';
+import { useMaster } from '../../state/MasterContext';
+import {
+  normalizeHabits,
+  lastNDays,
+  parseYmdToLocalDate,
+  isHabitScheduledOnDate,
+  getDoneForDate,
+} from '../../utils/habitsLocal';
 
-const HabitView = ({onClick}) => {
-  const [habitData, setHabitData] = useState([]);
-  const [habitKeys, setHabitKeys] = useState([]);
+const HabitView = ({ onClick }) => {
+  const { master } = useMaster();
 
-  useEffect(() => {
-    const loadHabits = async () => {
-      const data = await apiRequest('/habits/weekly');
-      setHabitData(data);
+  const habits = useMemo(() => normalizeHabits(master?.habits?.list || []), [master]);
+  const records = master?.habits?.records || [];
+  const dates = useMemo(() => lastNDays(7), []);
 
-      if (data.length > 0) {
-        const keys = Object.keys(data[0].habits);
-        setHabitKeys(keys);
-      }
-    };
-
-    loadHabits();
-  }, []);
+  const perDay = useMemo(() => {
+    return dates.map(dateStr => {
+      const dObj = parseYmdToLocalDate(dateStr);
+      const scheduled = habits.filter(h => isHabitScheduledOnDate(h, dObj));
+      const total = scheduled.length || 1;
+      const done = scheduled.filter(h => getDoneForDate(records, dateStr, h.id)).length;
+      return { dateStr, done, total };
+    });
+  }, [dates, habits, records]);
 
   return (
     <div className="habit-row">
-      <div className="habit-label">
+      {/* <div className="habit-label">
         <h4>WEEKLY PROGRESS</h4>
-      </div>
-      <div className="habit-days">
-        {habitData.map(({ date, habits }) => {
-          const completedCount = Object.values(habits).filter(Boolean).length;
-          const total = habitKeys.length || 1;
-          const backgroundOpacity = completedCount / total;
+      </div> */}
 
+      <div className="habit-days">
+        {perDay.map(({ dateStr, done, total }) => {
+          const opacity = total ? done / total : 0;
           return (
             <div
-              key={date}
+              key={dateStr}
               className="day-box"
-              title={`${date}: ${completedCount}/${total} habits done`}
+              title={`${dateStr}: ${done}/${total} habits done`}
               onClick={onClick}
-              style={{
-                backgroundColor: `rgba(76, 175, 80, ${backgroundOpacity})`,
-              }}
+              style={{ backgroundColor: `rgba(76, 175, 80, ${opacity})` }}
             >
-              {new Date(date).toLocaleDateString('en-GB', { weekday: 'short' })}
+              {new Date(dateStr).toLocaleDateString('en-GB', { weekday: 'short' })}
             </div>
           );
         })}

@@ -424,3 +424,29 @@
 .db-sidebar-button:hover{
     font-weight: bold;
 }
+
+/* Standard button used in widget headers */
+.ld-details-btn{
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 999px;
+  padding: .35rem .65rem;
+  color: rgba(255,255,255,0.9);
+  cursor: pointer;
+  font-size: .85em;
+}
+
+.ld-details-btn:hover{
+  background: rgba(255,255,255,0.12);
+}
+
+/* Center widgets spacing that matches your current look */
+.ld-center-grid{
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Make widgets in sidebar consistent spacing */
+.db-sidebar .ld-widget{
+  margin: .45rem 0;
+}

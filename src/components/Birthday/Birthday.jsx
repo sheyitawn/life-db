@@ -1,75 +1,80 @@
-import React, { useEffect, useState } from 'react';
-import apiRequest from '../../utils/apiRequest';
-import { GiPresent } from "react-icons/gi";
-import { FaRegCheckCircle } from "react-icons/fa";
+import React, { useMemo } from 'react';
+import { GiPresent } from 'react-icons/gi';
+import { FaRegCheckCircle } from 'react-icons/fa';
 import './birthday.css';
 
-const Birthday = () => {
-    const [birthdays, setBirthdays] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+import { useMaster } from '../../state/MasterContext';
+import { normalizeRelationships, daysUntilBirthday } from '../../utils/relationshipsLocal';
 
-    const fetchBirthdays = async () => {
-        try {
-            const data = await apiRequest('/relationships/birthdays/upcoming');
-            setBirthdays(data);
-        } catch (err) {
-            setError('Failed to load birthdays');
-        } finally {
-            setLoading(false);
-        }
-    };
+export default function Birthday() {
+  const { master, updateMaster } = useMaster();
 
-    const handlePresentToggle = async (id, currentStatus) => {
-        try {
-            await apiRequest(`/relationships/birthdays/${id}/present`, 'POST', {
-                got_present: !currentStatus,
-            });
-            fetchBirthdays(); // Refresh
-        } catch (err) {
-            console.error('Failed to update present status:', err);
-        }
-    };
+  const enabled = master?.widgets?.enabled || {};
+  const birthdaysEnabled = !!enabled.upcomingBirthdays;
 
-    useEffect(() => {
-        fetchBirthdays();
-    }, []);
+  // Hooks must always run — do NOT return before these.
+  const list = useMemo(
+    () => normalizeRelationships(master?.relationships?.list || []),
+    [master]
+  );
 
-    if (loading) return null;
-    if (error) return <div>{error}</div>;
-    if (birthdays.length === 0) return null;
+  const upcoming = useMemo(() => {
+    const now = new Date();
+    return list
+      .map(r => {
+        const daysAway = r.birthday ? daysUntilBirthday(r.birthday, now) : null;
+        return { ...r, daysAway };
+      })
+      .filter(r => typeof r.daysAway === 'number')
+      .sort((a, b) => a.daysAway - b.daysAway)
+      .slice(0, 5);
+  }, [list]);
 
-    return (
-        <div className="birthday-container">
-            {/* <h3>🎉 Upcoming Birthdays</h3> */}
-            {birthdays.map((person) => (
-                <div key={person.id} className="birthday-person">
-                    <div><strong>{person.name}'s</strong> birthday is in <strong>{person.daysAway}</strong> days!</div>
-                    
-                    {person.present && (
-                        <div style={{ marginTop: '0.5rem' }}>
-                            {!person.got_present ? (
-                                <button
-                                    className="present-button"
-                                    onClick={() => handlePresentToggle(person.id, false)}
-                                >
-                                    <GiPresent /> Get Present
-                                </button>
-                            ) : (
-                                <button
-                                    className="present-gotten-button"
-                                    onClick={() => handlePresentToggle(person.id, true)}
-                                    title="Click to mark present as not gotten"
-                                >
-                                    <FaRegCheckCircle /> Got Present!
-                                </button>
-                            )}
-                        </div>
-                    )}
-                </div>
-            ))}
+  if (!birthdaysEnabled) return null;
+  if (upcoming.length === 0) return null;
+
+  const togglePresent = (id) => {
+    updateMaster(prev => {
+      const m = structuredClone(prev || {});
+      m.relationships = m.relationships || {};
+      m.relationships.list = Array.isArray(m.relationships.list) ? m.relationships.list : [];
+
+      m.relationships.list = m.relationships.list.map(r => {
+        if (r.id !== id) return r;
+        return { ...r, gotPresent: !r.gotPresent };
+      });
+
+      return m;
+    });
+  };
+
+  return (
+    <div className="birthday-container">
+      {upcoming.map((person) => (
+        <div key={person.id} className="birthday-person">
+          <div>
+            <strong>{person.name}&apos;s</strong> birthday is in <strong>{person.daysAway}</strong> days!
+          </div>
+
+          {person.gettingPresent && (
+            <div style={{ marginTop: '0.5rem' }}>
+              {!person.gotPresent ? (
+                <button className="present-button" onClick={() => togglePresent(person.id)}>
+                  <GiPresent /> Get Present
+                </button>
+              ) : (
+                <button
+                  className="present-gotten-button"
+                  onClick={() => togglePresent(person.id)}
+                  title="Click to mark present as not gotten"
+                >
+                  <FaRegCheckCircle /> Got Present!
+                </button>
+              )}
+            </div>
+          )}
         </div>
-    );
-};
-
-export default Birthday;
+      ))}
+    </div>
+  );
+}

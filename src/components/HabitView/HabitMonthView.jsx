@@ -1,61 +1,26 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import apiRequest from '../../utils/apiRequest';
+import React, { useMemo, useState } from 'react';
 import './habitview.css';
 
-/* Local YYYY-MM-DD (avoid UTC drift) */
-const ymdLocal = (d) => {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-};
-
-/* All Date objects for a month (0-based monthIndex) */
-function getDaysInMonth(year, monthIndex) {
-  const days = [];
-  const first = new Date(year, monthIndex, 1);
-  const last = new Date(year, monthIndex + 1, 0);
-  for (let d = new Date(first); d <= last; d.setDate(d.getDate() + 1)) {
-    days.push(new Date(d));
-  }
-  return days;
-}
+import { useMaster } from '../../state/MasterContext';
+import {
+  ymdLocal,
+  getDaysInMonth,
+  normalizeHabits,
+  parseYmdToLocalDate,
+  isHabitScheduledOnDate,
+  getDoneForDate,
+} from '../../utils/habitsLocal';
 
 const HabitMonthView = ({ onClick, initialDate = new Date() }) => {
+  const { master } = useMaster();
   const [viewDate, setViewDate] = useState(initialDate);
-  const [habitData, setHabitData] = useState([]); // [{ date, habits }, ...]
-  const [habitKeys, setHabitKeys] = useState([]); // union of keys seen this month
+
+  const habits = useMemo(() => normalizeHabits(master?.habits?.list || []), [master]);
+  const records = master?.habits?.records || [];
 
   const year = viewDate.getFullYear();
   const monthIndex = viewDate.getMonth();
   const monthDays = useMemo(() => getDaysInMonth(year, monthIndex), [year, monthIndex]);
-
-  useEffect(() => {
-    (async () => {
-      const y = year;
-      const m = String(monthIndex + 1).padStart(2, '0');
-      const data = await apiRequest(`/habits/monthly?year=${y}&month=${m}`, 'GET');
-      const arr = Array.isArray(data) ? data : [];
-      setHabitData(arr);
-
-      const keysSet = new Set();
-      for (const row of arr) {
-        if (row?.habits && typeof row.habits === 'object') {
-          Object.keys(row.habits).forEach(k => keysSet.add(k));
-        }
-      }
-      setHabitKeys([...keysSet]);
-    })();
-  }, [year, monthIndex]);
-
-  // Index by local date string for quick lookup
-  const byDate = useMemo(() => {
-    const map = new Map();
-    for (const row of habitData) {
-      if (row?.date) map.set(row.date, row);
-    }
-    return map;
-  }, [habitData]);
 
   const monthLabel = new Date(year, monthIndex, 1).toLocaleDateString('en-GB', {
     month: 'long',
@@ -71,34 +36,30 @@ const HabitMonthView = ({ onClick, initialDate = new Date() }) => {
   const cells = useMemo(() => {
     const arr = [];
 
-    // leading pads
     for (let i = 0; i < leading; i++) arr.push({ type: 'pad', key: `pad-start-${i}` });
 
-    // month days
     for (const d of monthDays) {
       const dateStr = ymdLocal(d);
-      const row = byDate.get(dateStr);
-      const habits = row?.habits || {};
-      const total = habitKeys.length || Object.keys(habits).length || 1;
-      const completed = total ? Object.values(habits).filter(Boolean).length : 0;
-      const opacity = completed / total;
+      const scheduled = habits.filter(h => isHabitScheduledOnDate(h, d));
+      const total = scheduled.length || 1;
+      const done = scheduled.filter(h => getDoneForDate(records, dateStr, h.id)).length;
+      const opacity = done / total;
 
       arr.push({
         type: 'day',
         key: dateStr,
-        date: d,
+        date: new Date(d),
         dateStr,
-        completed,
+        done,
         total,
         opacity,
       });
     }
 
-    // trailing pads
     for (let i = 0; i < trailing; i++) arr.push({ type: 'pad', key: `pad-end-${i}` });
 
     return arr;
-  }, [monthDays, byDate, habitKeys, leading, trailing]);
+  }, [monthDays, habits, records, leading, trailing]);
 
   const goPrev = () => setViewDate(new Date(year, monthIndex - 1, 1));
   const goNext = () => setViewDate(new Date(year, monthIndex + 1, 1));
@@ -121,14 +82,12 @@ const HabitMonthView = ({ onClick, initialDate = new Date() }) => {
           </div>
         </div>
 
-        {/* Calendar header (Sun–Sat) */}
         <div className="calendar-header">
           {WEEKDAYS.map(d => (
             <div key={d} className="calendar-header-cell">{d}</div>
           ))}
         </div>
 
-        {/* Calendar grid */}
         <div className="calendar-grid">
           {cells.map(cell => {
             if (cell.type === 'pad') {
@@ -139,7 +98,7 @@ const HabitMonthView = ({ onClick, initialDate = new Date() }) => {
               <div
                 key={cell.key}
                 className={`calendar-cell ${isToday ? 'today' : ''}`}
-                title={`${cell.dateStr}: ${cell.completed}/${cell.total} habits done`}
+                title={`${cell.dateStr}: ${cell.done}/${cell.total} habits done`}
                 onClick={onClick}
                 style={{ backgroundColor: `rgba(76, 175, 80, ${cell.opacity})` }}
                 role="button"

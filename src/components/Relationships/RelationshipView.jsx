@@ -1,126 +1,109 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import apiRequest from '../../utils/apiRequest';
+import React, { useMemo } from 'react';
 import { toast } from 'react-toastify';
-import './relationships.css'
-import AddRelationship from './AddRelationship';
+import './relationships.css';
 
-const RelationshipView = () => {
-    const [relationships, setRelationships] = useState([]);
+import { useMaster } from '../../state/MasterContext';
+import {
+  normalizeRelationships,
+  computeCheckinMeta,
+  todayYmd
+} from '../../utils/relationshipsLocal';
 
+export default function RelationshipView() {
+  const { master, actions } = useMaster();
 
-    // Handle check-in action
-    const handleCheckIn = async (id) => {
-        try {
-            await apiRequest(`/relationships/relationships/${id}`, 'POST', { action: 'check-in' });
-            // Refresh relationships after check-in
-            const response = await apiRequest('/relationships/relationships');
-            setRelationships(response);
-            
-            toast(`Checked in with ${relationships[id].name}`)
-            console.log("🚀 ~ handleCheckIn ~ relationships:", relationships[id].name)
+  const enabled = master?.widgets?.enabled || {};
+  const checkinsEnabled = !!enabled.relationshipsCheckin;
 
-        } catch (error) {
-            console.error('Error updating relationship:', error);
-        }
-    };
+  const rawList = master?.relationships?.list || [];
 
-    // Handle skip action
-    const handleSkip = async (id) => {
-        try {
-            await apiRequest(`/relationships/relationships/${id}`, 'POST', { action: 'skip' });
-            // Refresh relationships after skip
-            const response = await apiRequest('/relationships/relationships');
-            setRelationships(response);
-            toast("skipped. next call in 2 days.")
-        } catch (error) {
-            console.error('Error skipping relationship:', error);
-        }
-    };
-    
+  const list = useMemo(
+    () => normalizeRelationships(rawList),
+    [rawList]
+  );
 
-    const fetchAllRelationships = async () => {
-        try {
-            const response = await apiRequest('/relationships/relationships');
-            setRelationships(response);
+  const sorted = useMemo(() => {
+    return list
+      .map(r => ({ ...r, ...computeCheckinMeta(r) }))
+      .sort((a, b) => {
+        if (a.overdue !== b.overdue) return a.overdue ? -1 : 1;
+        return a.dueInDays - b.dueInDays;
+      });
+  }, [list]);
 
-            // // Pass the most due relationships to the parent
-            // if (setRelationships) {
-            //     setRelationships(response);
-            // }
-        } catch (error) {
-            console.error('Error fetching most due relationships:', error);
-        }
-    };
+  const doCheckIn = (id) => {
+    actions.updateMaster(prev => {
+      const m = structuredClone(prev || {});
+      m.relationships = m.relationships || {};
+      m.relationships.list = Array.isArray(m.relationships.list) ? m.relationships.list : [];
 
-    // const fetchMostDueRelationships = async () => {
-    //     console.error('fetching');
+      m.relationships.list = m.relationships.list.map(r =>
+        r.id === id ? { ...r, lastCheckinDate: todayYmd() } : r
+      );
 
-    //     try {
-    //         const response = await apiRequest('/relationships/most-due');
-    //         // setLocalRelationships(response);
+      return m;
+    });
 
-    //         // Pass the most due relationships to the parent
-    //         if (setRelationships) {
-    //             setRelationships(response);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching most due relationships:', error);
-    //     }
-    // };
+    const r = list.find(x => x.id === id);
+    toast(`Checked in with ${r?.name || 'someone'}.`);
+  };
 
+  const skip = (id) => {
+    const now = new Date();
+    now.setDate(now.getDate() + 2);
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const twoDaysFromNow = `${y}-${m}-${d}`;
 
-    // useImperativeHandle(ref, () => ({
-    //     fetchMostDueRelationships,
-    // }));
+    actions.updateMaster(prev => {
+      const m2 = structuredClone(prev || {});
+      m2.relationships = m2.relationships || {};
+      m2.relationships.list = Array.isArray(m2.relationships.list) ? m2.relationships.list : [];
 
-    useEffect(() => {
+      m2.relationships.list = m2.relationships.list.map(r =>
+        r.id === id ? { ...r, lastCheckinDate: twoDaysFromNow } : r
+      );
 
+      return m2;
+    });
 
-        // fetchMostDueRelationships();
-        fetchAllRelationships()
-    }, [setRelationships]);
+    toast('Skipped. Next check-in pushed by ~2 days.');
+  };
 
-    return (
-        <div className="relationships-view">
-            <div className="relationships_box">
-                <h1 className="relationships_header">relationships</h1>
-                <AddRelationship onAdded={fetchAllRelationships} />
+  if (!checkinsEnabled) return null;
+  if (sorted.length === 0) return null;
 
-                <div className="relationships-view_relations">
-                    {relationships.map((relationship) => (
-                        <div key={relationship.id} className="relationships_relation">
-                            <div className="relationships_relation_content">
-                                <p>{relationship.name}</p>
-                                {/* <p>
-                                    {relationship.daysLeft > 0
-                                        ? `Next call in ${relationship.daysLeft} day(s)`
-                                        : `Overdue by ${relationship.overdueDays} day(s)! Call now.`}
-                                </p> */}
-                                <div className="relationships_relation_content_progress">
-                                    <div
-                                        className="relationships_relation_content_progress-bar"
-                                        style={{
-                                            width: `${relationship.progress * 100}%`,
-                                            background: relationship.overdue
-                                                ? '#C62915'
-                                                : '#15BAC6',
-                                        }}
-                                    />
-                                </div>
-                                
-                            </div>
+  return (
+    <div className="relationships-view">
+      <div className="relationships_box">
+        <h1 className="relationships_header">relationships</h1>
 
-                            <div className="relationships_relation_buttons">
-                                <button onClick={() => handleCheckIn(relationship.id)}>CHECK-IN</button>
-                                <button onClick={() => handleSkip(relationship.id)}>SKIP</button>    
-                            </div>
-                            
-                        </div>
-                    ))}
+        <div className="relationships-view_relations">
+          {sorted.map((r) => (
+            <div key={r.id} className="relationships_relation">
+              <div className="relationships_relation_content">
+                <p>{r.name}</p>
+
+                <div className="relationships_relation_content_progress">
+                  <div
+                    className="relationships_relation_content_progress-bar"
+                    style={{
+                      width: `${Math.max(0, Math.min(1, r.progress)) * 100}%`,
+                      background: r.overdue ? '#C62915' : '#15BAC6',
+                    }}
+                  />
                 </div>
-            </div>
-        </div>
-    );
-};
+              </div>
 
-export default RelationshipView;
+              <div className="relationships_relation_buttons">
+                <button onClick={() => doCheckIn(r.id)}>CHECK-IN</button>
+                <button onClick={() => skip(r.id)}>SKIP</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
